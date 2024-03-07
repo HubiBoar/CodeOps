@@ -82,7 +82,7 @@ public static class FeatureToggleExtensions
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
             FeatureToggle<T>.SectionName,
             new ConfigAsCode.Value(json),
-            ValidateConfiguration<T>);
+            FeatureToggle<T>.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<FeatureToggle<T>> Value<T>(
@@ -93,20 +93,6 @@ public static class FeatureToggleExtensions
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
             FeatureToggle<T>.SectionName,
             new ConfigAsCode.Value(value.ToString()),
-            ValidateConfiguration<T>);
-    }
-
-    private static OneOf<Success, ValidationErrors> ValidateConfiguration<T>(IConfiguration configuration)
-        where T : IFeatureName
-    {
-        var featureName = FeatureToggle<T>.SectionName;
-        var section = configuration.GetSection(featureName);
-
-        if(section is null)
-        {
-            return new ValidationErrors($"Missing FeatureToggle :: [{featureName}]");
-        }
-
-        return new Success();
+            FeatureToggle<T>.ValidateConfiguration);
     }
 }
