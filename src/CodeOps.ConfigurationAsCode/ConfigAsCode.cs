@@ -1,61 +1,20 @@
-using System.Linq.Expressions;
 using Definit.Configuration;
 using Definit.Validation;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Memory;
 using OneOf;
 using OneOf.Else;
 using Success = OneOf.Types.Success;
 
 namespace CodeOps.ConfigurationAsCode;
 
-public interface IConfigurationAsCodeProvider
+public sealed partial class ConfigAsCode
 {
-    public Task<IReadOnlyDictionary<string, string>> GetValues();
-
-    public Task UploadValues(IReadOnlyDictionary<string, string> entries);
-}
-
-public sealed class ConfigAsCode
-{
-    public interface IProvider<TSection>
-        where TSection : ISectionName
-    {
-        public Entry<TSection> ConfigurationAsCode(Context<TSection> context);
-    }
-
-    public sealed class Context<TSection>
-        where TSection : ISectionName
-    {
-        internal Context()
-        {
-        }
-    }
-
-    public sealed record Entry<TSection>(
-        Dictionary<string, OneOf<Value, Manual>> Entries,
-        Func<IConfiguration, OneOf<Success, ValidationErrors>> Validation)
-        where TSection : ISectionName
-    {
-        public Entry(
-            string sectionName,
-            OneOf<Value, Manual> sectionValue,
-            Func<IConfiguration, OneOf<Success, ValidationErrors>> validation) :
-            this(new Dictionary<string, OneOf<Value, Manual>>{[sectionName] = sectionValue}, validation)
-        {
-        }
-    }
-
-    public sealed record Value(string Val);
-    public sealed record Manual();
-    public sealed record Reference(string Path);
-
     private readonly Dictionary<string, OneOf<Value, Manual>> _entries = [];
     private readonly List<Func<IConfiguration, OneOf<Success, ValidationErrors>>> _validators = [];
 
-    private readonly IConfigurationAsCodeProvider _provider;
+    private readonly IConfigAsCodeProvider _provider;
 
-    public ConfigAsCode(IConfigurationAsCodeProvider provider)
+    public ConfigAsCode(IConfigAsCodeProvider provider)
     {
         _provider = provider;
     }

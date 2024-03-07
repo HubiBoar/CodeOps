@@ -4,7 +4,7 @@ using Definit.Configuration;
 
 namespace CodeOps.ConfigurationAsCode;
 
-public static class SectionReferenceExtensions
+public static class SectionExtensions
 {
     public static ConfigAsCode.Entry<TSection> Value<TSection, TValue>(
         this ConfigAsCode.Context<TSection> _,
