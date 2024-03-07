@@ -1,6 +1,10 @@
 using System.Linq.Expressions;
+using Definit.Configuration;
 using Definit.Validation;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Memory;
 using OneOf;
+using OneOf.Else;
 using Success = OneOf.Types.Success;
 
 namespace CodeOps.ConfigurationAsCode;
@@ -14,10 +18,41 @@ public interface IConfigurationAsCodeProvider
 
 public sealed class ConfigAsCode
 {
-    private sealed record Value(string Val);
-    private sealed record Manual();
+    public interface IProvider<TSection>
+        where TSection : ISectionName
+    {
+        public Entry<TSection> ConfigurationAsCode(Context<TSection> context);
+    }
 
-    private readonly Dictionary<string, (OneOf<Value, Manual> type, Validator<string>.Delegate validate)> _entries = [];
+    public sealed class Context<TSection>
+        where TSection : ISectionName
+    {
+        internal Context()
+        {
+        }
+    }
+
+    public sealed record Entry<TSection>(
+        Dictionary<string, OneOf<Value, Manual>> Entries,
+        Func<IConfiguration, OneOf<Success, ValidationErrors>> Validation)
+        where TSection : ISectionName
+    {
+        public Entry(
+            string sectionName,
+            OneOf<Value, Manual> sectionValue,
+            Func<IConfiguration, OneOf<Success, ValidationErrors>> validation) :
+            this(new Dictionary<string, OneOf<Value, Manual>>{[sectionName] = sectionValue}, validation)
+        {
+        }
+    }
+
+    public sealed record Value(string Val);
+    public sealed record Manual();
+    public sealed record Reference(string Path);
+
+    private readonly Dictionary<string, OneOf<Value, Manual>> _entries = [];
+    private readonly List<Func<IConfiguration, OneOf<Success, ValidationErrors>>> _validators = [];
+
     private readonly IConfigurationAsCodeProvider _provider;
 
     public ConfigAsCode(IConfigurationAsCodeProvider provider)
@@ -25,20 +60,15 @@ public sealed class ConfigAsCode
         _provider = provider;
     }
 
-    public ConfigAsCode AddValue<TMethod>(string name, string value)
-        where TMethod : IValidate<string>
+    public void AddReference<TSection>(Entry<TSection> reference)
+        where TSection : ISectionName
     {
-        _entries.Add(name, (new Value(value), TMethod.Validate));
+        foreach(var (name, entry) in reference.Entries)
+        {
+            _entries.Add(name, entry);
+        }
 
-        return this;
-    }
-
-    public ConfigAsCode AddManual<TMethod>(string name)
-        where TMethod : IValidate<string>
-    {
-        _entries.Add(name, (new Manual(), TMethod.Validate));
-
-        return this;
+        _validators.Add(reference.Validation);
     }
 
     public async Task<OneOf<Success, IReadOnlyCollection<ValidationErrors>>> Upload()
@@ -47,11 +77,11 @@ public sealed class ConfigAsCode
         var errors = new List<ValidationErrors>();
         var newEntries = new Dictionary<string, string>();
 
-        foreach (var (name, (entry, validate)) in _entries)
+        foreach (var (name, entry) in _entries)
         {
             entry.Match(
-                value => validate.InvokeAndReturnValue(value.Val),
-                manual => ValidateExistingValue(values, name, validate))
+                value => value.Val,
+                manual => GetExistingValue(values, name))
             .Switch(
                 value => newEntries.Add(name, value),
                 errors.Add);
@@ -62,22 +92,31 @@ public sealed class ConfigAsCode
             return errors;
         }
 
-        await _provider.UploadValues(newEntries);
+        var result = ValidateValues(newEntries);
 
-        return await ValidateExistingValues();
+        if(result.Is(out Success success).Else(out var resultErrors))
+        {
+            await _provider.UploadValues(newEntries);
+
+            var valuesAfterUpload = await _provider.GetValues();
+
+            return ValidateValues(valuesAfterUpload);
+        }
+
+        return resultErrors.ToList();
     }
 
-    private async Task<OneOf<Success, IReadOnlyCollection<ValidationErrors>>> ValidateExistingValues()
+    private OneOf<Success, IReadOnlyCollection<ValidationErrors>> ValidateValues(IReadOnlyDictionary<string, string> values)
     {
-        var values = await _provider.GetValues();
         var errors = new List<ValidationErrors>();
 
-        foreach(var (name, (entry, validate)) in _entries)
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(values!)
+            .Build();
+
+        foreach(var validator in _validators)
         {
-            ValidateExistingValue(values, name, validate)
-                .Switch(
-                    _ => {},
-                    errors.Add);
+            validator(configuration).Switch(success => {}, errors.Add);
         }
 
         if(errors.Count > 0)
@@ -88,11 +127,11 @@ public sealed class ConfigAsCode
         return new Success();
     }
 
-    private static OneOf<string, ValidationErrors> ValidateExistingValue(IReadOnlyDictionary<string, string> values, string name, Validator<string>.Delegate validate)
+    private static OneOf<string, ValidationErrors> GetExistingValue(IReadOnlyDictionary<string, string> values, string name)
     {
         if(values.TryGetValue(name, out var value))
         {
-            return validate.InvokeAndReturnValue(value);
+            return value;
         }
         else
         {
