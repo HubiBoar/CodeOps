@@ -21,6 +21,8 @@
     </ItemGroup>
     
     <PropertyGroup>
-        <MicrosoftExtensionsVersion>8.0.0</MicrosoftExtensionsVersion>
+      <MicrosoftExtensionsVersion>8.0.0</MicrosoftExtensionsVersion>
+      <DefinitVersion>1.0.7</DefinitVersion>
+      <OneOfElseVersion>1.0.3</OneOfElseVersion>
     </PropertyGroup>
 </Project>

@@ -3,8 +3,16 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
+  <!-- Definit -->
+  <ItemGroup>
+    <PackageVersion Include="Definit.Validation" Version="$(DefinitVersion)" />
+    <PackageVersion Include="Definit.Configuration" Version="$(DefinitVersion)" />
+  </ItemGroup>
+
   <!-- Microsoft -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsVersion)" />
   </ItemGroup>
+
+
 </Project>
