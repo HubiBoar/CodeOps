@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.ConfigurationAsCode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{7FE07440-5E33-4847-90A1-5E0CBC6707AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.EnvironmentAsCode", "CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj", "{9E113326-51C3-4F5B-A045-CD229A8C541C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7FE07440-5E33-4847-90A1-5E0CBC6707AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FE07440-5E33-4847-90A1-5E0CBC6707AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FE07440-5E33-4847-90A1-5E0CBC6707AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

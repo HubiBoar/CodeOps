@@ -1,18 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <IsPackable>false</IsPackable>
+      <Title>CodeOps.EnvironmentAsCode</Title>
+      <Description>CodeOps.EnvironmentAsCode</Description>
+      <PackageTags>EnvironmentAsCode</PackageTags>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Definit.Validation" />
     <PackageReference Include="Definit.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CodeOps.ConfigurationAsCode\CodeOps.ConfigurationAsCode.csproj" />
-    <ProjectReference Include="..\CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj" />
   </ItemGroup>
 
 </Project>

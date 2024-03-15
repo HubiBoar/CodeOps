@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <Title>CodeOps.ConfigurationAsCode</Title>
-        <Description>CodeOps.ConfigurationAsCode</Description>
-        <PackageTags>configuration</PackageTags>
-    </PropertyGroup>
+  <PropertyGroup>
+      <Title>CodeOps.ConfigurationAsCode</Title>
+      <Description>CodeOps.ConfigurationAsCode</Description>
+      <PackageTags>configuration</PackageTags>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Definit.Validation" />
-      <PackageReference Include="Definit.Configuration" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Definit.Validation" />
+    <PackageReference Include="Definit.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
 
 </Project>
