@@ -23,19 +23,25 @@ public sealed partial class ConfigAsCode
     }
 
     public sealed record Entry<TSection>(
-        Dictionary<string, OneOf<Value, Manual>> Entries,
+        Dictionary<string, OneOf<Value, Manual, Reference>> Entries,
         Func<IConfiguration, OneOf<Success, ValidationErrors>> Validation)
         where TSection : ISectionName
     {
         public Entry(
             string sectionName,
-            OneOf<Value, Manual> sectionValue,
+            OneOf<Value, Manual, Reference> sectionValue,
             Func<IConfiguration, OneOf<Success, ValidationErrors>> validation) :
-            this(new Dictionary<string, OneOf<Value, Manual>>{[sectionName] = sectionValue}, validation)
+            this(
+                new Dictionary<string, OneOf<Value, Manual, Reference>>
+                {
+                    [sectionName] = sectionValue
+                },
+                validation)
         {
         }
     }
 
     public sealed record Value(string Val);
     public sealed record Manual();
+    public sealed record Reference(string Path);
 }

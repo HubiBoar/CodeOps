@@ -2,6 +2,7 @@
 using Definit.Configuration;
 using Definit.Validation;
 using Definit.Validation.FluentValidation;
+using FluentValidation;
 using OneOf;
 using OneOf.Types;
 
@@ -20,13 +21,17 @@ internal sealed class Section : ConfigSection<Section>
     
     public string Value2 { get; } = string.Empty;
 
+    public string Value3 { get; } = string.Empty;
+
     protected override OneOf<Success, ValidationErrors> Validate(Validator<Section> context)
     {
         return context.Fluent(validator =>
         {
-            validator.RuleFor(x => x.Value1).IsConnectionString();
+            validator.RuleFor(x => x.Value1).NotEmpty();
 
-            validator.RuleFor(x => x.Value2).IsConnectionString();
+            validator.RuleFor(x => x.Value3).EmailAddress();
+
+            validator.RuleFor(x => x.Value3).IsConnectionString();
         });
     }
 }
@@ -66,15 +71,18 @@ internal sealed partial class Environment :
             prod => 
                 context
                     .Value(section => section.Value1, "ProdSectionValue1")
-                    .Manual(section => section.Value2),
+                    .Manual(section => section.Value2)
+                    .Reference(section => section.Value3, "ConnectionString"),
             acc =>
                 context
                     .Value(section => section.Value1, "AccSectionValue1")
-                    .Manual(section => section.Value2),
+                    .Manual(section => section.Value2)
+                    .Reference(section => section.Value3, "ConnectionString"),
             test =>
                 context
                     .Value(section => section.Value1, "TestSectionValue1")
-                    .Manual(section => section.Value2));
+                    .Manual(section => section.Value2)
+                    .Reference(section => section.Value3, "ConnectionString"));
     }
 
     public ConfigAsCode.Entry<Value> ConfigurationAsCode(ConfigAsCode.Context<Value> context)
@@ -83,8 +91,8 @@ internal sealed partial class Environment :
             prod => 
                 context.Value("ProdValue"),
             acc =>
-                context.Value("Accvalue"),
+                context.Value("AccValue"),
             test =>
-                context.Value("testValue"));
+                context.Value("TestValue"));
     }
 }

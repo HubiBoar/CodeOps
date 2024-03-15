@@ -5,7 +5,6 @@ public interface IEnvironmentVersion
     public static abstract string Name { get; }
 }
 
-
 public sealed class EnvironmentName
 {
     public string Name { get; }

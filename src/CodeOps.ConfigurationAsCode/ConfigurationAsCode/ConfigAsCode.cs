@@ -9,7 +9,7 @@ namespace CodeOps.ConfigurationAsCode;
 
 public sealed partial class ConfigAsCode
 {
-    private readonly Dictionary<string, OneOf<Value, Manual>> _entries = [];
+    private readonly Dictionary<string, OneOf<Value, Manual, Reference>> _entries = [];
     private readonly List<Func<IConfiguration, OneOf<Success, ValidationErrors>>> _validators = [];
 
     private readonly IConfigAsCodeProvider _provider;
@@ -19,15 +19,15 @@ public sealed partial class ConfigAsCode
         _provider = provider;
     }
 
-    public void AddReference<TSection>(Entry<TSection> reference)
+    public void AddEntries<TSection>(Entry<TSection> newEntry)
         where TSection : ISectionName
     {
-        foreach(var (name, entry) in reference.Entries)
+        foreach(var (name, entry) in newEntry.Entries)
         {
             _entries.Add(name, entry);
         }
 
-        _validators.Add(reference.Validation);
+        _validators.Add(newEntry.Validation);
     }
 
     public async Task<OneOf<Success, IReadOnlyCollection<ValidationErrors>>> Upload()
@@ -38,12 +38,32 @@ public sealed partial class ConfigAsCode
 
         foreach (var (name, entry) in _entries)
         {
-            entry.Match(
-                value => value.Val,
-                manual => GetExistingValue(values, name))
-            .Switch(
-                value => newEntries.Add(name, value),
-                errors.Add);
+            if(entry.Is(out Value value).Else(out var rest))
+            {
+                newEntries.Add(name, value.Val);
+            }
+            else if(rest.Is(out Manual _).Else(out var reference))
+            {
+                if(values.TryGetValue(name, out var foundValue))
+                {
+                    newEntries.Add(name, foundValue);
+                }
+                else
+                {
+                    errors.Add(new ValidationErrors($"Entry: [{name}] NotFound in Values"));
+                }
+            }
+            else
+            {
+                if(await _provider.TryGetReference(reference.Path, out var referenceValue))
+                {
+                    newEntries.Add(name, referenceValue);
+                }
+                else
+                {
+                    errors.Add(new ValidationErrors($"Entry: [{name}] Reference NotFound"));
+                }
+            }
         }
 
         if(errors.Count > 0)
@@ -53,7 +73,7 @@ public sealed partial class ConfigAsCode
 
         var result = ValidateValues(newEntries);
 
-        if(result.Is(out Success success).Else(out var resultErrors))
+        if(result.Is(out Success _).Else(out var resultErrors))
         {
             await _provider.UploadValues(newEntries);
 
@@ -84,17 +104,5 @@ public sealed partial class ConfigAsCode
         }
 
         return new Success();
-    }
-
-    private static OneOf<string, ValidationErrors> GetExistingValue(IReadOnlyDictionary<string, string> values, string name)
-    {
-        if(values.TryGetValue(name, out var value))
-        {
-            return value;
-        }
-        else
-        {
-            return new ValidationErrors($"Entry: [{name}] NotFound in Values");
-        }
     }
 }

@@ -62,6 +62,19 @@ public static class SectionExtensions
         return entry;
     }
 
+    public static ConfigAsCode.Entry<TSection> Reference<TSection, TValue>(
+        this ConfigAsCode.Entry<TSection> entry,
+        Expression<Func<TSection, TValue>> expression,
+        string path)
+        where TSection : ConfigSection<TSection>, ISectionName, new()
+    {
+        var sectionName = SectionName(TSection.SectionName, expression);
+
+        entry.Entries.Add(sectionName, new ConfigAsCode.Reference(path));
+
+        return entry;
+    }
+
     private static string SectionName<T>(string sectionName, Expression<T> expression)
     {
         var member = expression.Body as MemberExpression;
