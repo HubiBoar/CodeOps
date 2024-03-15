@@ -32,21 +32,27 @@ public sealed partial class ConfigAsCode
 
     public async Task<OneOf<Success, IReadOnlyCollection<ValidationErrors>>> Upload()
     {
-        var values = await _provider.GetValues();
+        var builder = new ConfigurationBuilder();
         var errors = new List<ValidationErrors>();
-        var newEntries = new Dictionary<string, string>();
+        var valuesToBeChecked = new Dictionary<string, string>();
+        var newEntries = new Dictionary<string, OneOf<Value, Reference>>();
+
+        await _provider.DownloadValues(builder);
+        var values = builder.Build().AsEnumerable().ToDictionary();
 
         foreach (var (name, entry) in _entries)
         {
             if(entry.Is(out Value value).Else(out var rest))
             {
-                newEntries.Add(name, value.Val);
+                valuesToBeChecked.Add(name, value.Val);
+                newEntries.Add(name, value);
             }
             else if(rest.Is(out Manual _).Else(out var reference))
             {
                 if(values.TryGetValue(name, out var foundValue))
                 {
-                    newEntries.Add(name, foundValue);
+                    valuesToBeChecked.Add(name, foundValue!);
+                    newEntries.Add(name, new Value(foundValue!));
                 }
                 else
                 {
@@ -57,7 +63,8 @@ public sealed partial class ConfigAsCode
             {
                 if(await _provider.TryGetReference(reference.Path, out var referenceValue))
                 {
-                    newEntries.Add(name, referenceValue);
+                    valuesToBeChecked.Add(name, referenceValue);
+                    newEntries.Add(name, reference);
                 }
                 else
                 {
@@ -71,15 +78,13 @@ public sealed partial class ConfigAsCode
             return errors;
         }
 
-        var result = ValidateValues(newEntries);
+        var result = ValidateValues(valuesToBeChecked);
 
-        if(result.Is(out Success _).Else(out var resultErrors))
+        if(result.Is(out Success success).Else(out var resultErrors))
         {
             await _provider.UploadValues(newEntries);
 
-            var valuesAfterUpload = await _provider.GetValues();
-
-            return ValidateValues(valuesAfterUpload);
+            return success;
         }
 
         return resultErrors.ToList();

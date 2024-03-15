@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <Title>CodeOps.ConfigurationAsCode</Title>
-      <Description>CodeOps.ConfigurationAsCode</Description>
-      <PackageTags>configuration</PackageTags>
+    <Title>CodeOps.InfrastructureAsCode</Title>
+    <Description>CodeOps.InfrastructureAsCode</Description>
+    <PackageTags>infra</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

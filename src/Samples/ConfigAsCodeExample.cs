@@ -41,7 +41,7 @@ internal sealed class Value : ConfigValue<Value, string, IsConnectionString>
     protected override string SectionName => "Name";
 }
 
-internal sealed partial class Environment : 
+internal sealed partial class Environment :
     ConfigAsCode.ISetup<FeatureToggle<Feature>>,
     ConfigAsCode.ISetup<Section>,
     ConfigAsCode.ISetup<Value>

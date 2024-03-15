@@ -23,7 +23,7 @@ internal sealed partial class Environment : EnvironmentAsCode<
         public static string Name => "Test";
     }
 
-    public Environment(IConfiguration configuration) : base(DefaultEnvironmentSetting(configuration))
+    public Environment(IConfiguration configuration) : base(GetSettingFromConfiguration(configuration))
     {
     }
 }

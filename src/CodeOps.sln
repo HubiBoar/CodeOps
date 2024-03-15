@@ -9,6 +9,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.EnvironmentAsCode", "CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj", "{9E113326-51C3-4F5B-A045-CD229A8C541C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeOps.InfrastructureAsCode", "CodeOps.InfrastructureAsCode", "{8AF90771-EC9C-46FF-94E5-12A6C4D0B949}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InfrastructureAsCode", "InfrastructureAsCode", "{A9A6DA0C-285E-402A-A1E4-525FB5B446B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.InfrastructureAsCode", "CodeOps.InfrastructureAsCode\InfrastructureAsCode\CodeOps.InfrastructureAsCode.csproj", "{8DECF3D2-E430-4F83-8520-E9D233055A3F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeOps.ConfigurationAsCode/ConfigurationAsCode", "CodeOps.ConfigurationAsCode\ConfigurationAsCode", "{21230D88-36C6-424B-B2FF-00DE547F0501}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeOps.ConfigurationAsCode", "CodeOps.ConfigurationAsCode", "{B71E7515-F168-4E65-89BE-0D3463E69612}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{73C8124E-DED4-4630-8675-14E374B80808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.ConfigurationAsCode.Providers.InMemory", "CodeOps.ConfigurationAsCode\Providers\InMemory\CodeOps.ConfigurationAsCode.Providers.InMemory.csproj", "{BA03391B-0372-472D-AF29-6F38717A9A98}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{6E72D4D9-28BB-48E0-9DCD-C5E12C469A02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.ConfigurationAsCode.Providers.Azure.AppConfiguration", "CodeOps.ConfigurationAsCode\Providers\Azure\AppConfiguration\CodeOps.ConfigurationAsCode.Providers.Azure.AppConfiguration.csproj", "{8966D6CB-5F9E-434B-B533-18ED6970C26A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.ConfigurationAsCode.Providers.Azure.KeyVault", "CodeOps.ConfigurationAsCode\Providers\Azure\KeyVault\CodeOps.ConfigurationAsCode.Providers.Azure.KeyVault.csproj", "{B895440C-4773-4A1E-A90B-3F969DA822F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +50,31 @@ Global
 		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E113326-51C3-4F5B-A045-CD229A8C541C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DECF3D2-E430-4F83-8520-E9D233055A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DECF3D2-E430-4F83-8520-E9D233055A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DECF3D2-E430-4F83-8520-E9D233055A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DECF3D2-E430-4F83-8520-E9D233055A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA03391B-0372-472D-AF29-6F38717A9A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA03391B-0372-472D-AF29-6F38717A9A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA03391B-0372-472D-AF29-6F38717A9A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA03391B-0372-472D-AF29-6F38717A9A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8966D6CB-5F9E-434B-B533-18ED6970C26A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8966D6CB-5F9E-434B-B533-18ED6970C26A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8966D6CB-5F9E-434B-B533-18ED6970C26A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8966D6CB-5F9E-434B-B533-18ED6970C26A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B895440C-4773-4A1E-A90B-3F969DA822F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B895440C-4773-4A1E-A90B-3F969DA822F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B895440C-4773-4A1E-A90B-3F969DA822F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B895440C-4773-4A1E-A90B-3F969DA822F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A9A6DA0C-285E-402A-A1E4-525FB5B446B7} = {8AF90771-EC9C-46FF-94E5-12A6C4D0B949}
+		{8DECF3D2-E430-4F83-8520-E9D233055A3F} = {A9A6DA0C-285E-402A-A1E4-525FB5B446B7}
+		{09B68B98-0BAF-46F8-8B98-D2C0A5B7FFD8} = {21230D88-36C6-424B-B2FF-00DE547F0501}
+		{73C8124E-DED4-4630-8675-14E374B80808} = {B71E7515-F168-4E65-89BE-0D3463E69612}
+		{BA03391B-0372-472D-AF29-6F38717A9A98} = {73C8124E-DED4-4630-8675-14E374B80808}
+		{6E72D4D9-28BB-48E0-9DCD-C5E12C469A02} = {73C8124E-DED4-4630-8675-14E374B80808}
+		{8966D6CB-5F9E-434B-B533-18ED6970C26A} = {6E72D4D9-28BB-48E0-9DCD-C5E12C469A02}
+		{B895440C-4773-4A1E-A90B-3F969DA822F7} = {6E72D4D9-28BB-48E0-9DCD-C5E12C469A02}
 	EndGlobalSection
 EndGlobal

@@ -35,7 +35,7 @@ public abstract class EnvironmentAsCodeBase<TEnvs>
         Parameters = new EnvironmentParameters(environmentName, index);
     }
     
-    protected static EnvironmentAsCodeName DefaultEnvironmentSetting(IConfiguration configuration)
+    protected static EnvironmentAsCodeName GetSettingFromConfiguration(IConfiguration configuration)
     {
         return EnvironmentSetting.Create(configuration).Match(
             valid => new EnvironmentAsCodeName(valid.ValidValue),
