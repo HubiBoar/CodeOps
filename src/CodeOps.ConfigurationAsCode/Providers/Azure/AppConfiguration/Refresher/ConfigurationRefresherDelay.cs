@@ -1,10 +1,10 @@
 ﻿using Definit.Configuration;
 using Definit.Validation.FluentValidation;
 
-namespace CodeOps.ConfigurationAsCode.Providers.Azure;
+namespace CodeOps.ConfigurationAsCode.Azure;
 
 //In milliseconds
-internal sealed class ConfigurationRefresherDelay :
+public sealed class ConfigurationRefresherDelay :
     ConfigValue<ConfigurationRefresherDelay, int, IsNotNull<int>>
 {
     protected override string SectionName { get; } = "ConfigurationRefresherDelay";

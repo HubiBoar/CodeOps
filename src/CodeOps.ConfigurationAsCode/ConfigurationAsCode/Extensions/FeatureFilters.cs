@@ -1,8 +1,7 @@
 using System.Text.Json;
 using Definit.Configuration;
-using Microsoft.FeatureManagement.FeatureFilters;
 using Definit.Validation;
-using Microsoft.Extensions.Configuration;
+using Microsoft.FeatureManagement.FeatureFilters;
 using OneOf;
 using OneOf.Types;
 
@@ -13,11 +12,13 @@ public static class FeatureToggle
     public interface IFilter
     {
         public string Name { get; }
+
+        public object Parameters { get; }
     }
 
     public interface IFilter<T> : IFilter
     {
-        public T Parameters { get; }
+        public new T Parameters { get; }
     }
 
     public sealed class Percentage : IFilter<PercentageFilterSettings>
@@ -25,6 +26,7 @@ public static class FeatureToggle
         public string Name => "Microsoft.Percentage";
 
         public PercentageFilterSettings Parameters { get; }
+        object IFilter.Parameters => Parameters;
 
         public Percentage(int value)
         {
@@ -33,6 +35,7 @@ public static class FeatureToggle
                 Value = value
             };
         }
+
     }
 
     public sealed class TimeWindow : IFilter<TimeWindowFilterSettings>
@@ -40,6 +43,7 @@ public static class FeatureToggle
         public string Name => "Microsoft.TimeWindow";
 
         public TimeWindowFilterSettings Parameters { get; }
+        object IFilter.Parameters => Parameters;
 
         public TimeWindow(DateTimeOffset? start, DateTimeOffset? end)
         {
@@ -56,6 +60,7 @@ public static class FeatureToggle
         public string Name => "Microsoft.Targeting";
 
         public TargetingFilterSettings Parameters { get; }
+        object IFilter.Parameters => Parameters;
 
         public Targeting(Audience audience)
         {
@@ -69,20 +74,28 @@ public static class FeatureToggle
 
 public static class FeatureToggleExtensions
 {
-    private sealed record FiltersEnabledFor(IReadOnlyCollection<FeatureToggle.IFilter> EnabledFor);
+    public static OneOf<Success, ValidationErrors> AddConfig<TSection>(
+        this ConfigAsCode.Builder builder,        
+        ConfigAsCode.IEntry<FeatureToggle<TSection>> configAsCode)
+        where TSection : IFeatureName
+    {
+        return builder.AddConfig(FeatureToggle<TSection>.Register, configAsCode);
+    }
 
     public static ConfigAsCode.Entry<FeatureToggle<T>> Filters<T>(
         this ConfigAsCode.Context<FeatureToggle<T>> _,
         params FeatureToggle.IFilter[] filters)
         where T : IFeatureName
     {
-        var enabledFor = new FiltersEnabledFor(filters);
-        var json = JsonSerializer.Serialize(enabledFor);
+        var features = new ConfigAsCode.FiltersEnabledFor(
+            filters
+                .Select(x => new ConfigAsCode.FeatureFilter(x.Name, x.Parameters))
+                .ToArray());
 
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
-            FeatureToggle<T>.SectionName,
-            new ConfigAsCode.Value(json),
-            FeatureToggle<T>.ValidateConfiguration);
+            new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
+            features,
+            FeatureToggle<T>.IsValid);
     }
 
     public static ConfigAsCode.Entry<FeatureToggle<T>> Value<T>(
@@ -91,8 +104,29 @@ public static class FeatureToggleExtensions
         where T : IFeatureName
     {
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
-            FeatureToggle<T>.SectionName,
-            new ConfigAsCode.Value(value.ToString()),
-            FeatureToggle<T>.ValidateConfiguration);
+            new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
+            new ConfigAsCode.FeatureFlag(value),
+            FeatureToggle<T>.IsValid);
+    }
+
+    public static ConfigAsCode.Entry<FeatureToggle<T>> Manual<T>(
+        this ConfigAsCode.Context<FeatureToggle<T>> _)
+        where T : IFeatureName
+    {
+        return new ConfigAsCode.Entry<FeatureToggle<T>>(
+            new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
+            new ConfigAsCode.Manual(),
+            FeatureToggle<T>.IsValid);
+    }
+
+    public static ConfigAsCode.Entry<FeatureToggle<T>> Reference<T>(
+        this ConfigAsCode.Context<FeatureToggle<T>> _,
+        string path)
+        where T : IFeatureName
+    {
+        return new ConfigAsCode.Entry<FeatureToggle<T>>(
+            new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
+            new ConfigAsCode.Reference(new ConfigAsCode.Path(path)),
+            FeatureToggle<T>.IsValid);
     }
 }

@@ -1,113 +1,100 @@
-using Definit.Configuration;
+using CodeOps.InfrastructureAsCode;
 using Definit.Validation;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using OneOf;
-using OneOf.Else;
 using Success = OneOf.Types.Success;
 
 namespace CodeOps.ConfigurationAsCode;
 
-public sealed partial class ConfigAsCode
+public static partial class ConfigAsCode
 {
-    private readonly Dictionary<string, OneOf<Value, Manual, Reference>> _entries = [];
-    private readonly List<Func<IConfiguration, OneOf<Success, ValidationErrors>>> _validators = [];
-
-    private readonly IConfigAsCodeProvider _provider;
-
-    public ConfigAsCode(IConfigAsCodeProvider provider)
+    public sealed class Builder : InfraAsCode.IComponent
     {
-        _provider = provider;
+        private readonly Enabled _enabled;
+        private readonly IServiceCollection _services;
+        private readonly IConfigurationManager _config;
+        private readonly ISource _source;
+
+        public Builder(ISource source, Enabled enabled, IServiceCollection services, IConfigurationManager config)
+        {
+            _source = source;
+            _enabled = enabled;
+            _services = services;
+            _config = config;
+
+            _source.Register(services, _config);
+        }
+        
+        public OneOf<Success, ValidationErrors> AddConfig<TOptions>(RegisterConfig factory, IEntry<TOptions> configAsCode)
+        {
+            return ConfigAsCode.AddConfig(factory, _services, _config, _enabled, _source , configAsCode);
+        }
     }
 
-    public void AddEntries<TSection>(Entry<TSection> newEntry)
-        where TSection : ISectionName
+    public static OneOf<Success, ValidationErrors> AddConfig<TOptions>(
+        this ISource provider,
+        RegisterConfig factory,
+        IServiceCollection services,
+        IConfigurationManager config,
+        Enabled enabled,
+        IEntry<TOptions> configAsCode)
     {
-        foreach(var (name, entry) in newEntry.Entries)
-        {
-            _entries.Add(name, entry);
-        }
-
-        _validators.Add(newEntry.Validation);
+        return AddConfig(factory, services, config, enabled, provider, configAsCode);
     }
 
-    public async Task<OneOf<Success, IReadOnlyCollection<ValidationErrors>>> Upload()
+    public static OneOf<Success, ValidationErrors> AddConfig<TOptions>(
+        RegisterConfig factory,
+        IServiceCollection services,
+        IConfigurationManager config,
+        Enabled enabled,
+        ISource provider,
+        IEntry<TOptions> configAsCode)
     {
-        var builder = new ConfigurationBuilder();
-        var errors = new List<ValidationErrors>();
-        var valuesToBeChecked = new Dictionary<string, string>();
-        var newEntries = new Dictionary<string, OneOf<Value, Reference>>();
-
-        await _provider.DownloadValues(builder);
-        var values = builder.Build().AsEnumerable().ToDictionary();
-
-        foreach (var (name, entry) in _entries)
+        if(enabled.IsEnabled == false)
         {
-            if(entry.Is(out Value value).Else(out var rest))
-            {
-                valuesToBeChecked.Add(name, value.Val);
-                newEntries.Add(name, value);
-            }
-            else if(rest.Is(out Manual _).Else(out var reference))
-            {
-                if(values.TryGetValue(name, out var foundValue))
-                {
-                    valuesToBeChecked.Add(name, foundValue!);
-                    newEntries.Add(name, new Value(foundValue!));
-                }
-                else
-                {
-                    errors.Add(new ValidationErrors($"Entry: [{name}] NotFound in Values"));
-                }
-            }
-            else
-            {
-                if(await _provider.TryGetReference(reference.Path, out var referenceValue))
-                {
-                    valuesToBeChecked.Add(name, referenceValue);
-                    newEntries.Add(name, reference);
-                }
-                else
-                {
-                    errors.Add(new ValidationErrors($"Entry: [{name}] Reference NotFound"));
-                }
-            }
+            return factory(services, config);
         }
 
-        if(errors.Count > 0)
-        {
-            return errors;
-        }
+        return AddEntry(provider, configAsCode)
+            .Match(
+                values => 
+                {
+                    provider.Register(services, config);
 
-        var result = ValidateValues(valuesToBeChecked);
-
-        if(result.Is(out Success success).Else(out var resultErrors))
-        {
-            await _provider.UploadValues(newEntries);
-
-            return success;
-        }
-
-        return resultErrors.ToList();
+                    return factory(services, config);
+                },
+                errors => errors);
     }
 
-    private OneOf<Success, IReadOnlyCollection<ValidationErrors>> ValidateValues(IReadOnlyDictionary<string, string> values)
+    public static OneOf<Success, ValidationErrors> AddEntry<TOptions>(ISource provider, IEntry<TOptions> configAsCode)
     {
-        var errors = new List<ValidationErrors>();
+        var newEntry = configAsCode.ConfigurationAsCode(new Context<TOptions>());
 
-        var configuration = new ConfigurationBuilder()
+        var values = newEntry
+            .Entries
+            .Select((path, entry) => (
+                path.Value,
+                entry.Match(
+                    value => value.Val,
+                    filter => filter.ToJson(),
+                    flag => flag.ToJson(),
+                    manual => provider.GetValue(path),
+                    reference => provider.GetValue(reference.Path))))
+            .ToDictionary();
+
+        var config = new ConfigurationBuilder()
             .AddInMemoryCollection(values!)
             .Build();
 
-        foreach(var validator in _validators)
-        {
-            validator(configuration).Switch(success => {}, errors.Add);
-        }
+        return newEntry.Validation(config);
+    }
+}
 
-        if(errors.Count > 0)
-        {
-            return errors;
-        }
-
-        return new Success();
+public static class DictionaryExtensions
+{
+    public static IEnumerable<TResult> Select<TKey, TValue, TResult>(this IEnumerable<KeyValuePair<TKey, TValue>> value, Func<TKey, TValue, TResult> func)
+    {
+        return value.Select(val => func(val.Key, val.Value));
     }
 }

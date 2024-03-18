@@ -3,6 +3,7 @@ using Definit.Configuration;
 using Definit.Validation;
 using Definit.Validation.FluentValidation;
 using FluentValidation;
+using Microsoft.Extensions.Hosting;
 using OneOf;
 using OneOf.Types;
 
@@ -41,10 +42,20 @@ internal sealed class Value : ConfigValue<Value, string, IsConnectionString>
     protected override string SectionName => "Name";
 }
 
+internal static class HostExample
+{
+    private static void Run(IHostApplicationBuilder builder)
+    {
+        FeatureToggle<Feature>.Register(builder.Services, builder.Configuration);
+        Section.Register(builder.Services, builder.Configuration);
+        Value.Register(builder.Services, builder.Configuration);        
+    }
+}
+
 internal sealed partial class Environment :
-    ConfigAsCode.ISetup<FeatureToggle<Feature>>,
-    ConfigAsCode.ISetup<Section>,
-    ConfigAsCode.ISetup<Value>
+    ConfigAsCode.IEntry<FeatureToggle<Feature>>,
+    ConfigAsCode.IEntry<Section>,
+    ConfigAsCode.IEntry<Value>
 {
     public ConfigAsCode.Entry<FeatureToggle<Feature>> ConfigurationAsCode(ConfigAsCode.Context<FeatureToggle<Feature>> context)
     {
@@ -88,11 +99,8 @@ internal sealed partial class Environment :
     public ConfigAsCode.Entry<Value> ConfigurationAsCode(ConfigAsCode.Context<Value> context)
     {
         return MatchEnvironment(
-            prod => 
-                context.Value("ProdValue"),
-            acc =>
-                context.Value("AccValue"),
-            test =>
-                context.Value("TestValue"));
+            prod => context.Value("ProdValue"),
+            acc  => context.Reference("AccValue"),
+            test => context.Manual());
     }
 }

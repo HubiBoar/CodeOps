@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <Title>CodeOps.ConfigurationAsCode.Providers.InMemory</Title>
-      <Description>CodeOps.ConfigurationAsCode.Providers.InMemory</Description>
-      <PackageTags>configuration</PackageTags>
+      <Title>CodeOps.InfrastructureAsCode.Azure</Title>
+      <Description>CodeOps.InfrastructureAsCode.Azure</Description>
+      <PackageTags>InfrastructureAsCode</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Definit.Validation" />
     <PackageReference Include="Definit.Configuration" />
+    <PackageReference Include="Definit.Utils" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
@@ -27,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ConfigurationAsCode\CodeOps.ConfigurationAsCode.csproj" />
+    <ProjectReference Include="..\..\InfrastructureAsCode\CodeOps.InfrastructureAsCode.csproj" />
   </ItemGroup>
 
 </Project>

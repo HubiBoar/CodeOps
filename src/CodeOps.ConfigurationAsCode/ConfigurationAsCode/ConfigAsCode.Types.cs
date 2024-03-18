@@ -1,38 +1,50 @@
-using Definit.Configuration;
+using System.Text.Json;
+using CodeOps.InfrastructureAsCode;
 using Definit.Validation;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using OneOf;
 using Success = OneOf.Types.Success;
 
 namespace CodeOps.ConfigurationAsCode;
 
-public sealed partial class ConfigAsCode
+public static partial class ConfigAsCode
 {
-    public interface ISetup<TSection>
-        where TSection : ISectionName
+    public delegate OneOf<Success, ValidationErrors> RegisterConfig(IServiceCollection services, IConfiguration configuration);
+    
+    public sealed record Enabled(bool IsEnabled);
+
+    public interface IEntry<TOptions>
     {
-        public Entry<TSection> ConfigurationAsCode(Context<TSection> context);
+        public Entry<TOptions> ConfigurationAsCode(Context<TOptions> context);
     }
 
-    public sealed class Context<TSection>
-        where TSection : ISectionName
+    public interface ISource : InfraAsCode.IComponent
+    {
+        public void Register(IServiceCollection services, IConfigurationManager config);
+
+        public void UploadValues(IReadOnlyDictionary<Path, OneOf<Value, FiltersEnabledFor, FeatureFlag, Reference>> entries);
+
+        public string GetValue(Path path);
+    }
+
+    public sealed class Context<TOptions>
     {
         internal Context()
         {
         }
     }
 
-    public sealed record Entry<TSection>(
-        Dictionary<string, OneOf<Value, Manual, Reference>> Entries,
+    public sealed record Entry<TOptions>(
+        Dictionary<Path, OneOf<Value, FiltersEnabledFor, FeatureFlag, Manual, Reference>> Entries,
         Func<IConfiguration, OneOf<Success, ValidationErrors>> Validation)
-        where TSection : ISectionName
     {
         public Entry(
-            string sectionName,
-            OneOf<Value, Manual, Reference> sectionValue,
+            Path sectionName,
+            OneOf<Value, FiltersEnabledFor, FeatureFlag, Manual, Reference> sectionValue,
             Func<IConfiguration, OneOf<Success, ValidationErrors>> validation) :
             this(
-                new Dictionary<string, OneOf<Value, Manual, Reference>>
+                new Dictionary<Path, OneOf<Value,  FiltersEnabledFor, FeatureFlag, Manual, Reference>>
                 {
                     [sectionName] = sectionValue
                 },
@@ -41,7 +53,27 @@ public sealed partial class ConfigAsCode
         }
     }
 
+    public sealed record Path(string Value)
+    {
+        public bool IsFeature { get; } = Value.StartsWith("FeatureManagement:");
+    }
+
     public sealed record Value(string Val);
+    public sealed record FiltersEnabledFor(IReadOnlyCollection<FeatureFilter> EnabledFor)
+    {
+        public string ToJson()
+        {
+            return JsonSerializer.Serialize(this);
+        }
+    }
+    public sealed record FeatureFilter(string Name, object Parameters);
+    public sealed record FeatureFlag(bool Enabled)
+    {
+        public string ToJson()
+        {
+            return Enabled.ToString();
+        }
+    }
     public sealed record Manual();
-    public sealed record Reference(string Path);
+    public sealed record Reference(Path Path);
 }

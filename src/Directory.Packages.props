@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageVersion Include="Definit.Validation" Version="$(DefinitVersion)" />
     <PackageVersion Include="Definit.Configuration" Version="$(DefinitVersion)" />
+    <PackageVersion Include="Definit.Utils" Version="$(DefinitVersion)" />
   </ItemGroup>
 
   <!-- Microsoft -->

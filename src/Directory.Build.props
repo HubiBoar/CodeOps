@@ -22,7 +22,7 @@
     
     <PropertyGroup>
       <MicrosoftExtensionsVersion>8.0.0</MicrosoftExtensionsVersion>
-      <DefinitVersion>1.0.9</DefinitVersion>
+      <DefinitVersion>1.0.10</DefinitVersion>
       <OneOfElseVersion>1.0.3</OneOfElseVersion>
     </PropertyGroup>
 </Project>

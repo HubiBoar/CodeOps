@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
 
-namespace CodeOps.ConfigurationAsCode.Providers.Azure;
+namespace CodeOps.ConfigurationAsCode.Azure;
 
-internal class AppConfigurationRefresher : BackgroundService
+internal sealed class AppConfigurationRefresher : BackgroundService
 {
     private readonly IConfigurationRefresherProvider _refresherProvider;
     private readonly ConfigurationRefresherDelay.Get _refresherDelay;
