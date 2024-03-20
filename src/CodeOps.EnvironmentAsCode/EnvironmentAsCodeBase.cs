@@ -1,5 +1,4 @@
 ﻿using Definit.Configuration;
-using Definit.Validation;
 using Definit.Validation.FluentValidation;
 using Microsoft.Extensions.Configuration;
 

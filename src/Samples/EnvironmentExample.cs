@@ -27,15 +27,12 @@ internal sealed partial class Environment : EnvironmentAsCode<
         public static string Name => "Test";
     }
 
-    private ConfigAsCode.Enabled ConfigAsCodeEnabled { get; }
-
     private IHostApplicationBuilder Builder { get; }
+    private string[] Args { get; }
 
-    private AzureDeploymentLocation AzureDeploymentLocation { get; } = new (AzureLocation.WestEurope, "Test-RG", "Test-Sub");
-
-    public Environment(IConfiguration configuration, ConfigAsCode.Enabled configAsCodeEnabled, IHostApplicationBuilder builder) : base(GetSettingFromConfiguration(configuration))
+    public Environment(IHostApplicationBuilder builder, string[] args) : base(GetSettingFromConfiguration(builder.Configuration))
     {
-        ConfigAsCodeEnabled = configAsCodeEnabled;
         Builder = builder;
+        Args = args;
     }
 }

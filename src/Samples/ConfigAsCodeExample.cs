@@ -1,8 +1,10 @@
 ﻿using CodeOps.ConfigurationAsCode;
+using CodeOps.EnvironmentAsCode;
 using Definit.Configuration;
 using Definit.Validation;
 using Definit.Validation.FluentValidation;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using OneOf;
 using OneOf.Types;
@@ -55,7 +57,8 @@ internal static class HostExample
 internal sealed partial class Environment :
     ConfigAsCode.IEntry<FeatureToggle<Feature>>,
     ConfigAsCode.IEntry<Section>,
-    ConfigAsCode.IEntry<Value>
+    ConfigAsCode.IEntry<Value>,
+    ArgumentAsCode.IEntry<ConfigAsCode.Enabled>
 {
     public ConfigAsCode.Entry<FeatureToggle<Feature>> ConfigurationAsCode(ConfigAsCode.Context<FeatureToggle<Feature>> context)
     {
@@ -102,5 +105,32 @@ internal sealed partial class Environment :
             prod => context.Value("ProdValue"),
             acc  => context.Reference("AccValue"),
             test => context.Manual());
+    }
+
+    public ArgumentAsCode.Entry<ConfigAsCode.Enabled> ArgumentAsCode(ArgumentAsCode.Context<ConfigAsCode.Enabled> context)
+    {
+        return MatchEnvironment(
+            prod =>
+                context
+                    .DefaultValue(new ConfigAsCode.Enabled(true))
+                    .FromArgs(Args, "cac", "config-as-code", arg => new ConfigAsCode.Enabled(bool.Parse(arg)))
+                    .FromConfig(Builder.Configuration, config => new ConfigAsCode.Enabled(config.GetValue<bool>("ConfigAsCode"))),
+            acc  =>
+                context
+                    .DefaultValue(new ConfigAsCode.Enabled(true))
+                    .FromArgs<ConfigAsCodeEnabled>(Args)
+                    .FromConfig<ConfigAsCodeEnabled>(Builder.Configuration),
+            test => new ConfigAsCode.Enabled(true));
+    }
+
+    private struct ConfigAsCodeEnabled : ArgumentAsCode.IArgument<ConfigAsCodeEnabled, ConfigAsCode.Enabled, bool, IsNotNull<bool>>
+    {
+        public static string SectionName => "ConfigAsCode";
+
+        public static string Shortcut => "cac";
+
+        public static string Name => "config-as-code";
+
+        public static ConfigAsCode.Enabled Map(bool value) => new (value);
     }
 }
