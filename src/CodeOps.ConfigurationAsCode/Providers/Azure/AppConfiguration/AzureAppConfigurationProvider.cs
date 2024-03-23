@@ -6,6 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using CodeOps.InfrastructureAsCode.Azure;
 using Microsoft.Extensions.Configuration;
 using AppConfig = CodeOps.ConfigurationAsCode.Azure.AzureAppConfigAsCodeSource;
+using Azure.ResourceManager.Authorization;
+using Azure.ResourceManager.Models;
+using Azure.ResourceManager.KeyVault;
+using Azure.ResourceManager.Authorization.Models;
 
 namespace CodeOps.ConfigurationAsCode.Azure;
 
@@ -71,19 +75,38 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
             _ => "free"
         };
         
-        var resourceData = new AppConfigurationStoreData(location, new AppConfigurationSku(skuName));
+        var resourceData = new AppConfigurationStoreData(location, new AppConfigurationSku(skuName))
+        {
+            Identity = new ManagedServiceIdentity(ManagedServiceIdentityType.SystemAssigned)
+        };
 
         var resources = resourceGroup.GetAppConfigurationStores();
-        if (resources.Exists(_name.Value) == false)
-        {
-            resources.CreateOrUpdate(
+
+        var result = resources
+            .CreateOrUpdate(
                 WaitUntil.Completed,
                 _name.Value,
-                resourceData);
-        }
+                resourceData)
+            .Value;
 
         var uri = GetAppConfigUri(_name);
         var secretClient = _provisionSecretsClient(credentials, options);
+
+        var keyVault = options
+            .Subscription
+            .GetKeyVaults()
+            .Single(x => x.Data.Properties.VaultUri == secretClient.VaultUri);
+
+        var roleAssignmentName = "KeyVaultAdministrator";
+        var roleAssignment = new RoleAssignmentCreateOrUpdateContent(keyVault.Data.Id, result.Data.Identity.PrincipalId!.Value);
+
+        var roles = keyVault.GetRoleAssignments();
+
+        roles.CreateOrUpdate(
+            WaitUntil.Completed,
+            roleAssignmentName,
+            roleAssignment);
+
         var source = _factory(credentials, uri, secretClient);
 
         return source;

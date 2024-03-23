@@ -55,13 +55,11 @@ public sealed class AzureKeyVaultProvider : IAzureComponentProvider<KeyVault>, I
         var resourceData = new KeyVaultCreateOrUpdateContent(location, properties);
 
         var resources = resourceGroup.GetKeyVaults();
-        if (resources.Exists(name.Value) == false)
-        {
-            resources.CreateOrUpdate(
-                WaitUntil.Completed,
-                name.Value,
-                resourceData);
-        }
+
+        resources.CreateOrUpdate(
+            WaitUntil.Completed,
+            name.Value,
+            resourceData);
 
         return GetKeyVault(name, credentials);
     }

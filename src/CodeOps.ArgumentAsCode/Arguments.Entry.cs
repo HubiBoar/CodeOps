@@ -2,7 +2,7 @@ using Definit.Validation;
 using Microsoft.Extensions.Configuration;
 using OneOf;
 
- namespace CodeOps.ArgumentAsCode;
+namespace CodeOps.ArgumentAsCode;
 
 public static partial class ArgumentAsCode
 {

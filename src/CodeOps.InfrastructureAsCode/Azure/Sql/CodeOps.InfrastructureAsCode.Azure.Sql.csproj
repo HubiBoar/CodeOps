@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <Title>CodeOps.InfrastructureAsCode.Azure.Sql</Title>
+      <Description>CodeOps.InfrastructureAsCode.Azure.Sql</Description>
+      <PackageTags>InfrastructureAsCode.Sql</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Azure\CodeOps.InfrastructureAsCode.Azure.csproj" />
+  </ItemGroup>
+
+</Project>

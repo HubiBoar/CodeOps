@@ -1,8 +1,4 @@
-using Azure.Core;
-using CodeOps.ConfigurationAsCode;
 using CodeOps.EnvironmentAsCode;
-using CodeOps.InfrastructureAsCode.Azure;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace Samples;
