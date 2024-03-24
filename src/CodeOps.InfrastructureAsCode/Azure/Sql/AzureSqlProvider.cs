@@ -2,6 +2,7 @@
 using Azure.ResourceManager.Models;
 using Azure.ResourceManager.Sql;
 using Azure.ResourceManager.Sql.Models;
+using CodeOps.EnvironmentAsCode;
 
 namespace CodeOps.InfrastructureAsCode.Azure;
 
@@ -25,9 +26,8 @@ public sealed class AzureSqlProvider : IAzureComponentProvider<DBConnectionCompo
         _modifyServer = modifyServer;
     }
     
-    public DBConnectionComponent Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    public async Task<DBConnectionComponent> Provision(AzureDeploymentOptions options)
     {
-        var subscription = options.Subscription;
         var location = options.Location;
         var resourceGroup = options.ResourceGroup;
       
@@ -38,22 +38,22 @@ public sealed class AzureSqlProvider : IAzureComponentProvider<DBConnectionCompo
 
         _modifyServer(serverData);
 
-        var serverResult = resourceGroup
+        var serverResult = await resourceGroup
             .GetSqlServers()
-            .CreateOrUpdate(
+            .CreateOrUpdateAsync(
                 WaitUntil.Completed,
                 _serverName.Value,
-                serverData)
-            .Value;
+                serverData);
             
         var dataBaseData = new SqlDatabaseData(location)
         {
             Sku = _sku
         };
 
-        serverResult
+        await serverResult
+            .Value
             .GetSqlDatabases()
-            .CreateOrUpdate(
+            .CreateOrUpdateAsync(
                 WaitUntil.Completed,
                 _dbName.Value,
                 dataBaseData);
@@ -61,9 +61,9 @@ public sealed class AzureSqlProvider : IAzureComponentProvider<DBConnectionCompo
         return GetDBConnectionComponent();
     }
 
-    public DBConnectionComponent Get(AzureCredentails credentials)
+    public Task<DBConnectionComponent> Get(AzureDeploymentOptions _)
     {
-        return GetDBConnectionComponent();;
+        return GetDBConnectionComponent().AsTask();
     }
 
     private DBConnectionComponent GetDBConnectionComponent()

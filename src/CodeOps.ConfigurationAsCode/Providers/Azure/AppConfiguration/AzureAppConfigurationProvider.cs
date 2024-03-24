@@ -30,9 +30,9 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
     private readonly IServiceCollection _services;
     private readonly IConfigurationManager _configuration;
     private readonly ConfigAsCode.Enabled _enabled;
-    private readonly Func<AzureCredentails, SecretClient> _getSecretsClient;
-    private readonly Func<AzureCredentails, AzureDeploymentOptions, SecretClient> _provisionSecretsClient;
-    private readonly Func<AzureCredentails, Uri, SecretClient, AppConfig> _factory;
+    private readonly Func<AzureDeploymentOptions, Task<SecretClient>> _getSecretsClient;
+    private readonly Func<AzureDeploymentOptions, Task<SecretClient>> _provisionSecretsClient;
+    private readonly Func<AzureDeploymentOptions, Uri, SecretClient, Task<AppConfig>> _factory;
 
     private AzureAppConfigurationProvider(
         Name name,
@@ -40,9 +40,9 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
         IServiceCollection services,
         IConfigurationManager configuration,
         ConfigAsCode.Enabled enabled,
-        Func<AzureCredentails, Uri, SecretClient, AppConfig> factory,
-        Func<AzureCredentails, SecretClient> getSecretsClient,
-        Func<AzureCredentails, AzureDeploymentOptions, SecretClient> provisionSecretsClient)
+        Func<AzureDeploymentOptions, Uri, SecretClient, Task<AppConfig>> factory,
+        Func<AzureDeploymentOptions, Task<SecretClient>> getSecretsClient,
+        Func<AzureDeploymentOptions, Task<SecretClient>> provisionSecretsClient)
     {
         _name = name;
         _sku = sku;
@@ -54,19 +54,20 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
         _provisionSecretsClient = provisionSecretsClient;
     }
 
-    public AppConfig Get(AzureCredentails credentials)
+    public async Task<AppConfig> Get(AzureDeploymentOptions credentials)
     {
         var uri = GetAppConfigUri(_name);
-        var secretClient = _getSecretsClient(credentials);
-        var source = _factory(credentials, uri, secretClient);
+        var secretClient = await _getSecretsClient(credentials);
+        var source = await _factory(credentials, uri, secretClient);
 
         return source;
     }
 
-    public AppConfig Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    public async Task<AppConfig> Provision(AzureDeploymentOptions options)
     {
         var resourceGroup = options.ResourceGroup;
         var location = options.Location;
+        var credentials = options.Credentials;
 
         var skuName = _sku switch
         {
@@ -82,15 +83,14 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
 
         var resources = resourceGroup.GetAppConfigurationStores();
 
-        var result = resources
-            .CreateOrUpdate(
+        var result = await resources
+            .CreateOrUpdateAsync(
                 WaitUntil.Completed,
                 _name.Value,
-                resourceData)
-            .Value;
+                resourceData);
 
         var uri = GetAppConfigUri(_name);
-        var secretClient = _provisionSecretsClient(credentials, options);
+        var secretClient = await _provisionSecretsClient(options);
 
         var keyVault = options
             .Subscription
@@ -98,16 +98,16 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
             .Single(x => x.Data.Properties.VaultUri == secretClient.VaultUri);
 
         var roleAssignmentName = "KeyVaultAdministrator";
-        var roleAssignment = new RoleAssignmentCreateOrUpdateContent(keyVault.Data.Id, result.Data.Identity.PrincipalId!.Value);
+        var roleAssignment = new RoleAssignmentCreateOrUpdateContent(keyVault.Data.Id, result.Value.Data.Identity.PrincipalId!.Value);
 
         var roles = keyVault.GetRoleAssignments();
 
-        roles.CreateOrUpdate(
+        await roles.CreateOrUpdateAsync(
             WaitUntil.Completed,
             roleAssignmentName,
             roleAssignment);
 
-        var source = _factory(credentials, uri, secretClient);
+        var source = await _factory(options, uri, secretClient);
 
         return source;
     }
@@ -117,25 +117,25 @@ public sealed partial  class AzureAppConfigurationProvider : IAzureComponentProv
         return new ($"https://{name.Value}.azconfig.io");   
     }
 
-    ConfigAsCode.ISource IAzureComponentProvider<ConfigAsCode.ISource>.Get(AzureCredentails credentials)
+    async Task<ConfigAsCode.ISource> IAzureComponentProvider<ConfigAsCode.ISource>.Get(AzureDeploymentOptions options)
     {
-        return Get(credentials);
+        return await Get(options);
     }
 
-    ConfigAsCode.ISource IAzureComponentProvider<ConfigAsCode.ISource>.Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    async Task<ConfigAsCode.ISource> IAzureComponentProvider<ConfigAsCode.ISource>.Provision(AzureDeploymentOptions options)
     {
-        return Provision(credentials, options);
+        return await Provision(options);
     }
 
-    ConfigAsCode.Builder IAzureComponentProvider<ConfigAsCode.Builder>.Get(AzureCredentails credentials)
+    async Task<ConfigAsCode.Builder> IAzureComponentProvider<ConfigAsCode.Builder>.Get(AzureDeploymentOptions options)
     {
-        var source = Get(credentials);
+        var source = await Get(options);
         return new ConfigAsCode.Builder(source, _enabled, _services, _configuration);
     }
 
-    ConfigAsCode.Builder IAzureComponentProvider<ConfigAsCode.Builder>.Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    async Task<ConfigAsCode.Builder> IAzureComponentProvider<ConfigAsCode.Builder>.Provision(AzureDeploymentOptions options)
     {
-        var source = Provision(credentials, options);
+        var source = await Provision(options);
         return new ConfigAsCode.Builder(source, _enabled, _services, _configuration);
     }
 }

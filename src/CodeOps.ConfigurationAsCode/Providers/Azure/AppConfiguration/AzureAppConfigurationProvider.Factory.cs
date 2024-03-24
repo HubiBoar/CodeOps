@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using KeyVault = CodeOps.ConfigurationAsCode.Azure.AzureKeyVaultProvider;
 using AppConfig = CodeOps.ConfigurationAsCode.Azure.AzureAppConfigAsCodeSource;
+using CodeOps.EnvironmentAsCode;
 
 namespace CodeOps.ConfigurationAsCode.Azure;
 
@@ -25,18 +26,18 @@ public sealed partial class AzureAppConfigurationProvider
             services,
             configuration,
             enabled,
-            (credentials, uri, secretClient) =>
+            (options, uri, secretClient) =>
                 AppConfig.Create(
-                    credentials.Credentials,
+                    options.Credentials,
                     secretClient,
                     uri,
                     label.Value,
                     services,
                     configuration,
                     enabled,
-                    sentinel),
-            (credentials) => KeyVault.GetKeyVault(keyVaultName, credentials),
-            (credentials, options) => KeyVault.ProvisionKeyVault(keyVaultName, keyVaultSku, credentials, options));
+                    sentinel).AsTask(),
+            (options) => KeyVault.GetKeyVault(keyVaultName, options.Credentials).AsTask(),
+            (options) => KeyVault.ProvisionKeyVault(keyVaultName, keyVaultSku, options));
     }
 
     public static AzureAppConfigurationProvider Create(
@@ -57,9 +58,9 @@ public sealed partial class AzureAppConfigurationProvider
             services,
             configuration,
             enabled,
-            (credentials, uri, secretClient) =>
+            (options, uri, secretClient) =>
                 AppConfig.Create(
-                    credentials.Credentials,
+                    options.Credentials,
                     secretClient,
                     uri,
                     label.Value,
@@ -67,9 +68,9 @@ public sealed partial class AzureAppConfigurationProvider
                     configuration,
                     enabled,
                     sentinel,
-                    refresher),
-            (credentials) => KeyVault.GetKeyVault(keyVaultName, credentials),
-            (credentials, options) => KeyVault.ProvisionKeyVault(keyVaultName, keyVaultSku, credentials, options));
+                    refresher).AsTask(),
+            (options) => KeyVault.GetKeyVault(keyVaultName, options.Credentials).AsTask(),
+            (options) => KeyVault.ProvisionKeyVault(keyVaultName, keyVaultSku, options));
     }
 
     public static AzureAppConfigurationProvider Create(
@@ -88,18 +89,18 @@ public sealed partial class AzureAppConfigurationProvider
             services,
             configuration,
             enabled,
-            (credentials, uri, secretClient) =>
+            (options, uri, secretClient) =>
                 AppConfig.Create(
-                    credentials.Credentials,
+                    options.Credentials,
                     secretClient,
                     uri,
                     label.Value,
                     services,
                     configuration,
                     enabled,
-                    sentinel),
-            (credentials) => secretClient,
-            (credentials, options) => secretClient);
+                    sentinel).AsTask(),
+            (options) => secretClient.AsTask(),
+            (options) => secretClient.AsTask());
     }
 
     public static AzureAppConfigurationProvider Create(
@@ -119,9 +120,9 @@ public sealed partial class AzureAppConfigurationProvider
             services,
             configuration,
             enabled,
-            (credentials, uri, secretClient) =>
+            (options, uri, secretClient) =>
                 AppConfig.Create(
-                    credentials.Credentials,
+                    options.Credentials,
                     secretClient,
                     uri,
                     label.Value,
@@ -129,8 +130,8 @@ public sealed partial class AzureAppConfigurationProvider
                     configuration,
                     enabled,
                     sentinel,
-                    refresher),
-            (credentials) => secretClient,
-            (credentials, options) => secretClient);
+                    refresher).AsTask(),
+            (options) => secretClient.AsTask(),
+            (options) => secretClient.AsTask());
     }
 }

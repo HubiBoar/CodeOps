@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <Title>CodeOps.InfrastructureAsCode.Azure.ContainerRegistry</Title>
+      <Description>CodeOps.InfrastructureAsCode.Azure.ContainerRegistry</Description>
+      <PackageTags>InfrastructureAsCode</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Azure\CodeOps.InfrastructureAsCode.Azure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Containers.ContainerRegistry" />
+    <PackageReference Include="Azure.ResourceManager.ContainerRegistry" />
+  </ItemGroup>
+
+</Project>

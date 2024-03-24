@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj" />
+  </ItemGroup>
+
 </Project>

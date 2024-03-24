@@ -2,21 +2,20 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <!-- Definit -->
   <ItemGroup>
+    <PackageVersion Include="Azure.Containers.ContainerRegistry" Version="1.1.1" />
+    <PackageVersion Include="Azure.ResourceManager.AppService" Version="1.0.2" />
     <PackageVersion Include="Definit.Validation" Version="$(DefinitVersion)" />
     <PackageVersion Include="Definit.Configuration" Version="$(DefinitVersion)" />
     <PackageVersion Include="Definit.Utils" Version="$(DefinitVersion)" />
   </ItemGroup>
-
   <!-- Microsoft -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(MicrosoftExtensionsVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="5.1.0" />
   </ItemGroup>
-
   <!-- Azure -->
   <ItemGroup>
     <PackageVersion Include="Azure.Identity" Version="1.10.3" />
@@ -28,12 +27,11 @@
     <PackageVersion Include="Azure.ResourceManager" Version="1.9.0" />
     <PackageVersion Include="Azure.ResourceManager.Sql" Version="1.2.0" />
     <PackageVersion Include="Azure.ResourceManager.AppConfiguration" Version="1.1.0" />
-    <PackageVersion Include="Azure.ResourceManager.ContainerRegistry" Version="1.1.0" />
+    <PackageVersion Include="Azure.ResourceManager.ContainerRegistry" Version="1.2.0" />
   </ItemGroup>
-
   <!-- Other  -->
   <ItemGroup>
+    <PackageVersion Include="CliWrap" Version="3.6.6" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
 </Project>

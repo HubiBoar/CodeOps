@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CodeOps.DeploymentAsCode\CodeOps.DeploymentAsCode.csproj" />
     <ProjectReference Include="..\..\InfrastructureAsCode\CodeOps.InfrastructureAsCode.csproj" />
   </ItemGroup>
 

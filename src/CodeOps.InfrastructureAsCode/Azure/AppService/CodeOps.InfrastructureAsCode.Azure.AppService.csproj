@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <Title>CodeOps.InfrastructureAsCode.Azure.AppService</Title>
+      <Description>CodeOps.InfrastructureAsCode.Azure.AppService</Description>
+      <PackageTags>InfrastructureAsCode</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Azure\CodeOps.InfrastructureAsCode.Azure.csproj" />
+    <ProjectReference Include="..\ContainerRegistry\CodeOps.InfrastructureAsCode.Azure.ContainerRegistry.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.ResourceManager.AppService" />
+  </ItemGroup>
+
+</Project>

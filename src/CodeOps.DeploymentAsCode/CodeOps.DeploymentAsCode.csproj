@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <Title>CodeOps.DeploymentAsCode</Title>
+      <Description>CodeOps.DeploymentAsCode</Description>
+      <PackageTags>DeploymentAsCode</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Definit.Validation" />
+    <PackageReference Include="Definit.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="CliWrap" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj" />
+    <ProjectReference Include="..\CodeOps.InfrastructureAsCode\InfrastructureAsCode\CodeOps.InfrastructureAsCode.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -12,7 +12,7 @@ namespace Samples;
 internal sealed partial class Environment :
     InfraAsCode.IEntry<ConfigAsCode.Builder>,
     ConfigAsCode.IEntry<Sentinel>,
-    ArgumentAsCode.IEntry<AzureDeploymentLocation>
+    ArgumentAsCode.IEntry<AzureOptions>
 {
     public InfraAsCode.Entry<ConfigAsCode.Builder> InfrastructureAsCode(InfraAsCode.Context<ConfigAsCode.Builder> context)
     {
@@ -41,7 +41,7 @@ internal sealed partial class Environment :
         {
             return AppConfig
                 .Create(name, label, sku, keyVaultName, keyVaultSku, this.GetArgument<ConfigAsCode.Enabled>(), Builder.Services, Builder.Configuration, this)
-                .InfraAsCode(this.GetArgument<AzureDeploymentLocation>(), context);
+                .InfraAsCode(this.GetArgument<AzureOptions>(), context);
         }
 
         InfraAsCode.Entry<ConfigAsCode.Builder> CreateNullLabel(AppConfig.Name name, AppConfig.Sku sku, KeyVault.Name keyVaultName, KeyVault.Sku keyVaultSku)
@@ -58,11 +58,11 @@ internal sealed partial class Environment :
             test => context.Value(1));
     }
 
-    public ArgumentAsCode.Entry<AzureDeploymentLocation> ArgumentAsCode(ArgumentAsCode.Context<AzureDeploymentLocation> context)
+    public ArgumentAsCode.Entry<AzureOptions> ArgumentAsCode(ArgumentAsCode.Context<AzureOptions> context)
     {
         return MatchEnvironment(
-            prod => new AzureDeploymentLocation(AzureLocation.WestEurope, "Prod-RG", "Prod-Sub"), 
-            acc  => new AzureDeploymentLocation(AzureLocation.WestEurope, "Acc-RG", "Acc-Sub"),
-            test => new AzureDeploymentLocation(AzureLocation.WestEurope, "Test-RG", "Test-Sub"));
+            prod => new AzureOptions(AzureLocation.WestEurope, "Prod-RG", "Prod-Sub"), 
+            acc  => new AzureOptions(AzureLocation.WestEurope, "Acc-RG", "Acc-Sub"),
+            test => new AzureOptions(AzureLocation.WestEurope, "Test-RG", "Test-Sub"));
     }
 }

@@ -12,23 +12,27 @@ public sealed class AzureDeploymentOptions
     public SubscriptionResource Subscription { get; }
     public AzureLocation Location { get; }
     public ResourceGroupResource ResourceGroup { get; }
+    public TokenCredential Credentials { get; }
     
     private AzureDeploymentOptions(
         SubscriptionResource subscription,
         AzureLocation location,
-        ResourceGroupResource resourceGroup)
+        ResourceGroupResource resourceGroup,
+        TokenCredential credentials)
     {
         Subscription = subscription;
         Location = location;
         ResourceGroup = resourceGroup;
+        Credentials = credentials;
     }
     
-    public static AzureDeploymentOptions Create(AzureDeploymentLocation deploymentLocation, AzureCredentails credentials)
+    public static AzureDeploymentOptions Create(AzureOptions deploymentLocation)
     {
         var location = deploymentLocation.Location;
         var resourceGroupName = deploymentLocation.ResourceGroupName;
+        var credentials = deploymentLocation.Credential;
 
-        var subscription = new ArmClient(credentials.Credentials).GetSubscriptions()
+        var subscription = new ArmClient(credentials).GetSubscriptions()
             .Single(x => x.Data.DisplayName == deploymentLocation.SubscriptionName);
         
         var resourceGroupData = new ResourceGroupData(location);
@@ -38,7 +42,7 @@ public sealed class AzureDeploymentOptions
         {
             var resourceGroup = resources.Get(resourceGroupName);
 
-            return new AzureDeploymentOptions(subscription, location, resourceGroup);
+            return new AzureDeploymentOptions(subscription, location, resourceGroup, credentials);
         }
         else
         {
@@ -47,22 +51,22 @@ public sealed class AzureDeploymentOptions
                 resourceGroupName,
                 resourceGroupData).Value;
 
-            return new AzureDeploymentOptions(subscription, location, resourceGroup);
+            return new AzureDeploymentOptions(subscription, location, resourceGroup, credentials);
         }
     }
 }
 
-public sealed record AzureDeploymentLocation(AzureLocation Location, string ResourceGroupName, string SubscriptionName);
-
-public sealed class AzureCredentails
+public sealed record AzureOptions(AzureLocation Location, string ResourceGroupName, string SubscriptionName, TokenCredential Credential)
 {
-    public TokenCredential Credentials { get; }
+    public AzureOptions(AzureLocation location, string resourceGroupName, string subscriptionName) : this(location, resourceGroupName, subscriptionName, DefaultCredentials())
+    {
+    }
 
-    internal AzureCredentails()
+    public static TokenCredential DefaultCredentials()
     {
         try
         {
-            Credentials = new DefaultAzureCredential();
+            return new DefaultAzureCredential();
         }
         catch
         {
@@ -74,43 +78,68 @@ public sealed class AzureCredentails
 public interface IAzureComponentProvider<TComponent>
     where TComponent : InfraAsCode.IComponent
 {
-    protected TComponent Get(
-        AzureCredentails credentials);
+    protected Task<TComponent> Get(
+        AzureDeploymentOptions options);
     
-    protected TComponent Provision(
-        AzureCredentails credentials,
+    protected Task<TComponent> Provision(
         AzureDeploymentOptions options);
 
     public virtual InfraAsCode.Entry<TComponent> InfraAsCode(
-        AzureDeploymentLocation location,
+        AzureOptions location,
         InfraAsCode.Context<TComponent> context)
     {
-        return new InfraAsCode.Entry<TComponent>(() => 
-        {
-            var credentials = new AzureCredentails();
-
-            return context.Match(
-                get => Get(credentials),
-                provision =>
-                {
-                    var settings = AzureDeploymentOptions.Create(location, credentials);
-                    Console.WriteLine($"--- Provisioning: {GetType().GetTypeVerboseName()}");
-                    
-                    var result = Provision(credentials, settings);
-                    
-                    Console.WriteLine($"--- Provisioning Finished");
-
-                    return result;
-                });
-        });
+        return context.AzureInfraAsCode(location, Get, Provision);
     }
 }
 
 public static class AzureComponentProviderExtensions
 {
-    public static InfraAsCode.Entry<TComponent> InfraAsCode<TComponent>(this IAzureComponentProvider<TComponent> provider, AzureDeploymentLocation location, InfraAsCode.Context<TComponent> context)
+    public static InfraAsCode.Entry<TComponent> InfraAsCode<TComponent>(this IAzureComponentProvider<TComponent> provider, AzureOptions location, InfraAsCode.Context<TComponent> context)
         where TComponent : InfraAsCode.IComponent
     {
         return provider.InfraAsCode(location, context);
+    }
+
+     public static InfraAsCode.Entry<TComponent> AzureInfraAsCode<TComponent>(
+        this InfraAsCode.Context<TComponent> context,
+        AzureOptions location,
+        Func<AzureDeploymentOptions, Task<TComponent>> getFactory,
+        Func<AzureDeploymentOptions, Task<TComponent>> provisionFactory)
+        where TComponent : InfraAsCode.IComponent
+    {
+        return context.AzureInfraAsCode(location, (_, options) => getFactory(options), (_, options) => provisionFactory(options));
+    }
+
+    public static InfraAsCode.Entry<TComponent> AzureInfraAsCode<TComponent>(
+        this InfraAsCode.Context<TComponent> _,
+        AzureOptions location,
+        Func<InfraAsCode.Get, AzureDeploymentOptions, Task<TComponent>> getFactory,
+        Func<InfraAsCode.Provision, AzureDeploymentOptions, Task<TComponent>> provisionFactory)
+        where TComponent : InfraAsCode.IComponent
+    {
+        var type = typeof(TComponent);
+        return new InfraAsCode.Entry<TComponent>(
+            get =>
+            {
+                var options = AzureDeploymentOptions.Create(location);
+                Console.WriteLine($"--- Get: {type.GetTypeVerboseName()}");
+
+                var result = getFactory(get, options);
+
+                Console.WriteLine($"--- Provisioning Finished");
+
+                return result;
+            },
+            provision =>
+            {
+                var options = AzureDeploymentOptions.Create(location);
+                Console.WriteLine($"--- Provisioning: {type.GetTypeVerboseName()}");
+                
+                var result = provisionFactory(provision, options);
+                
+                Console.WriteLine($"--- Provisioning Finished");
+
+                return result;
+            });
     }
 }

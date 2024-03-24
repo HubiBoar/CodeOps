@@ -6,6 +6,8 @@ using Azure.ResourceManager.KeyVault;
 using KeyVault = CodeOps.ConfigurationAsCode.Azure.AzureKeyVaultConfigAsCodeSource;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Azure.Core;
+using CodeOps.EnvironmentAsCode;
 
 namespace CodeOps.ConfigurationAsCode.Azure;
 
@@ -34,17 +36,18 @@ public sealed class AzureKeyVaultProvider : IAzureComponentProvider<KeyVault>, I
         _configuration = configuration;
     }
 
-    public static SecretClient GetKeyVault(Name name, AzureCredentails credentials)
+    public static SecretClient GetKeyVault(Name name, TokenCredential credential)
     {
         var keyVaultUri = GetKeyVaultUri(name);
-        return new SecretClient(keyVaultUri, credentials.Credentials);
+        return new SecretClient(keyVaultUri, credential);
     }
     
-    public static SecretClient ProvisionKeyVault(Name name, Sku sku, AzureCredentails credentials, AzureDeploymentOptions options)
+    public static async Task<SecretClient> ProvisionKeyVault(Name name, Sku sku, AzureDeploymentOptions options)
     {
         var subscription = options.Subscription;
         var location = options.Location;
         var resourceGroup = options.ResourceGroup;
+        var credentials = options.Credentials;
         
         var properties = new KeyVaultProperties(subscription.Data.TenantId!.Value, new KeyVaultSku(KeyVaultSkuFamily.A, Map(sku)))
         {
@@ -56,7 +59,7 @@ public sealed class AzureKeyVaultProvider : IAzureComponentProvider<KeyVault>, I
 
         var resources = resourceGroup.GetKeyVaults();
 
-        resources.CreateOrUpdate(
+        await resources.CreateOrUpdateAsync(
             WaitUntil.Completed,
             name.Value,
             resourceData);
@@ -64,16 +67,16 @@ public sealed class AzureKeyVaultProvider : IAzureComponentProvider<KeyVault>, I
         return GetKeyVault(name, credentials);
     }
 
-    public KeyVault Get(AzureCredentails credentials)
+    public Task<KeyVault> Get(AzureDeploymentOptions options)
     {
-        var secretClient = GetKeyVault(_name, credentials);
+        var secretClient = GetKeyVault(_name, options.Credentials);
 
-        return new KeyVault(secretClient);
+        return new KeyVault(secretClient).AsTask();
     }
 
-    public KeyVault Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    public async Task<KeyVault> Provision(AzureDeploymentOptions options)
     {
-        var secretClient = ProvisionKeyVault(_name, _sku, credentials, options);
+        var secretClient = await ProvisionKeyVault(_name, _sku, options);
 
         return new KeyVault(secretClient);
     }
@@ -93,25 +96,25 @@ public sealed class AzureKeyVaultProvider : IAzureComponentProvider<KeyVault>, I
         };
     }
 
-    ConfigAsCode.ISource IAzureComponentProvider<ConfigAsCode.ISource>.Get(AzureCredentails credentials)
+    async Task<ConfigAsCode.ISource> IAzureComponentProvider<ConfigAsCode.ISource>.Get(AzureDeploymentOptions options)
     {
-        return Get(credentials);
+        return await Get(options);
     }
 
-    ConfigAsCode.ISource IAzureComponentProvider<ConfigAsCode.ISource>.Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    async Task<ConfigAsCode.ISource> IAzureComponentProvider<ConfigAsCode.ISource>.Provision(AzureDeploymentOptions options)
     {
-        return Provision(credentials, options);
+        return await Provision(options);
     }
 
-    ConfigAsCode.Builder IAzureComponentProvider<ConfigAsCode.Builder>.Get(AzureCredentails credentials)
+    async Task<ConfigAsCode.Builder> IAzureComponentProvider<ConfigAsCode.Builder>.Get(AzureDeploymentOptions options)
     {
-        var source = Get(credentials);
+        var source = await Get(options);
         return new ConfigAsCode.Builder(source, _enabled, _services, _configuration);
     }
 
-    ConfigAsCode.Builder IAzureComponentProvider<ConfigAsCode.Builder>.Provision(AzureCredentails credentials, AzureDeploymentOptions options)
+    async Task<ConfigAsCode.Builder> IAzureComponentProvider<ConfigAsCode.Builder>.Provision(AzureDeploymentOptions options)
     {
-        var source = Provision(credentials, options);
+        var source = await Provision(options);
         return new ConfigAsCode.Builder(source, _enabled, _services, _configuration);
     }
 }

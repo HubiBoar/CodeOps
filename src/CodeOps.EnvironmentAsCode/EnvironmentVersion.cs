@@ -29,3 +29,11 @@ public sealed class Environment<T>
         EnvironmentName = new EnvironmentName(Name);
     }
 }
+
+public static class TaskExtensions
+{
+    public static Task<T> AsTask<T>(this T obj)
+    {
+        return Task.FromResult(obj);
+    }
+}
