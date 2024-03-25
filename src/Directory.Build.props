@@ -6,23 +6,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-    <PropertyGroup>
-        <Authors>Hubert Dzikuc</Authors>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageProjectUrl>https://github.com/HubiBoar/CodeOps</PackageProjectUrl>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/HubiBoar/CodeOps</RepositoryUrl>
-    </PropertyGroup>
-    
-    <ItemGroup>
-        <None Include="../../../README.md" Pack="true" PackagePath="" Visible="false" />
-        <None Include="../../../LICENSE" Pack="true" PackagePath="" Visible="false" />
-    </ItemGroup>
-    
-    <PropertyGroup>
-      <MicrosoftExtensionsVersion>8.0.0</MicrosoftExtensionsVersion>
-      <DefinitVersion>1.0.10</DefinitVersion>
-      <OneOfElseVersion>1.0.3</OneOfElseVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Hubert Dzikuc</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/HubiBoar/CodeOps</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/HubiBoar/CodeOps</RepositoryUrl>
+  </PropertyGroup>
+      
+  <PropertyGroup>
+    <MicrosoftExtensionsVersion>8.0.0</MicrosoftExtensionsVersion>
+    <DefinitVersion>1.0.10</DefinitVersion>
+    <OneOfElseVersion>1.0.3</OneOfElseVersion>
+  </PropertyGroup>
+
 </Project>

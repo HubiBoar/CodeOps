@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <Title>CodeOps.InfrastructureAsCode.Azure.ContainerRegistry</Title>
-      <Description>CodeOps.InfrastructureAsCode.Azure.ContainerRegistry</Description>
-      <PackageTags>InfrastructureAsCode</PackageTags>
+    <Title>CodeOps.InfrastructureAsCode.Azure.ContainerRegistry</Title>
+    <Description>CodeOps.InfrastructureAsCode.Azure.ContainerRegistry</Description>
+    <PackageTags>InfrastructureAsCode</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../../../README.md" Pack="true" PackagePath="" Visible="false" />
+    <None Include="../../../../LICENSE" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\Azure\CodeOps.InfrastructureAsCode.Azure.csproj" />
