@@ -20,6 +20,19 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(MicrosoftExtensionsVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="5.1.0" />
   </ItemGroup>
+
+  <!-- Momolith -->
+  <ItemGroup>
+    <PackageVersion Include="Momolith.Modules" Version="$(MomolithVersion)" />
+  </ItemGroup>
+
+  <!-- EntityFramework -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(EntityFramework)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFramework)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(EntityFramework)" />
+  </ItemGroup>
+
   <!-- Azure -->
   <ItemGroup>
     <PackageVersion Include="Azure.Identity" Version="1.10.3" />

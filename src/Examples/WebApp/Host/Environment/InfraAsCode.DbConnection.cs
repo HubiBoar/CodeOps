@@ -8,9 +8,9 @@ using Sql = CodeOps.InfrastructureAsCode.Azure.AzureSqlProvider;
 namespace Examples.WebProject;
 
 internal sealed partial class Environment :
-    InfraAsCode.IEntry<DBConnectionComponent>
+    InfraAsCode.IEntry<SqlServerConnection>
 {
-    public InfraAsCode.Entry<DBConnectionComponent> InfrastructureAsCode(InfraAsCode.Context<DBConnectionComponent> context)
+    public InfraAsCode.Entry<SqlServerConnection> InfrastructureAsCode(InfraAsCode.Context<SqlServerConnection> context)
     {
         return MatchEnvironment(
             prod =>
@@ -24,7 +24,7 @@ internal sealed partial class Environment :
                     new Sql.DbName("sql-db"),
                     new SqlSku("Basic")));
 
-        InfraAsCode.Entry<DBConnectionComponent> Create(Sql.ServerName serverName, Sql.DbName dbName, SqlSku sku)
+        InfraAsCode.Entry<SqlServerConnection> Create(Sql.ServerName serverName, Sql.DbName dbName, SqlSku sku)
         {
             return new Sql(serverName, dbName, sku, _ => {})
                 .InfraAsCode(this.GetArgument<AzureOptions>(), context);

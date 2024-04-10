@@ -6,9 +6,9 @@ using CodeOps.EnvironmentAsCode;
 
 namespace CodeOps.InfrastructureAsCode.Azure;
 
-public sealed record DBConnectionComponent(string ConnectionString) : InfraAsCode.IComponent;
+public sealed record SqlServerConnection(string ConnectionString) : InfraAsCode.IComponent;
 
-public sealed class AzureSqlProvider : IAzureComponentProvider<DBConnectionComponent>
+public sealed class AzureSqlProvider : IAzureComponentProvider<SqlServerConnection>
 {
     public sealed record ServerName(string Value);
     public sealed record DbName(string Value);
@@ -26,7 +26,7 @@ public sealed class AzureSqlProvider : IAzureComponentProvider<DBConnectionCompo
         _modifyServer = modifyServer;
     }
     
-    public async Task<DBConnectionComponent> Provision(AzureDeploymentOptions options)
+    public async Task<SqlServerConnection> Provision(AzureDeploymentOptions options)
     {
         var location = options.Location;
         var resourceGroup = options.ResourceGroup;
@@ -61,13 +61,13 @@ public sealed class AzureSqlProvider : IAzureComponentProvider<DBConnectionCompo
         return GetDBConnectionComponent();
     }
 
-    public Task<DBConnectionComponent> Get(AzureDeploymentOptions _)
+    public Task<SqlServerConnection> Get(AzureDeploymentOptions _)
     {
         return GetDBConnectionComponent().AsTask();
     }
 
-    private DBConnectionComponent GetDBConnectionComponent()
+    private SqlServerConnection GetDBConnectionComponent()
     {
-        return new DBConnectionComponent($"""Server=tcp:{_serverName.Value}.database.windows.net,1433;Initial Catalog={_dbName.Value};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";""");
+        return new SqlServerConnection($"""Server=tcp:{_serverName.Value}.database.windows.net,1433;Initial Catalog={_dbName.Value};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";""");
     }
 }
