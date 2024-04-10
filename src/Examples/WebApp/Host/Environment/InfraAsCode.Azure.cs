@@ -1,16 +1,14 @@
 using Azure.Core;
-using CodeOps.ArgumentAsCode;
 using CodeOps.InfrastructureAsCode.Azure;
 
-namespace Examples.WebProject;
+namespace Examples.WebApp;
 
-internal sealed partial class Environment :
-    ArgumentAsCode.IEntry<AzureOptions>
+internal sealed partial class Environment
 {
-    public ArgumentAsCode.Entry<AzureOptions> ArgumentAsCode(ArgumentAsCode.Context<AzureOptions> context)
+    private AzureOptions GetAzureOptions()
     {
         return MatchEnvironment(
-            prod => new AzureOptions(AzureLocation.WestEurope, "Prod-RG", "Prod-Sub"), 
-            test => new AzureOptions(AzureLocation.WestEurope, "Test-RG", "Test-Sub"));
+            prod => new AzureOptions(AzureLocation.WestEurope, "RG-P", "Prod-Sub"), 
+            test => new AzureOptions(AzureLocation.WestEurope, "RG-T", "Test-Sub"));
     }
 }

@@ -5,7 +5,7 @@ using CodeOps.EnvironmentAsCode;
 using Azure.ResourceManager.Sql.Models;
 using Sql = CodeOps.InfrastructureAsCode.Azure.AzureSqlProvider;
 
-namespace Examples.WebProject;
+namespace Examples.WebApp;
 
 internal sealed partial class Environment :
     InfraAsCode.IEntry<SqlServerConnection>
@@ -27,7 +27,7 @@ internal sealed partial class Environment :
         InfraAsCode.Entry<SqlServerConnection> Create(Sql.ServerName serverName, Sql.DbName dbName, SqlSku sku)
         {
             return new Sql(serverName, dbName, sku, _ => {})
-                .InfraAsCode(this.GetArgument<AzureOptions>(), context);
+                .InfraAsCode(GetAzureOptions(), context);
         }
     }
 }

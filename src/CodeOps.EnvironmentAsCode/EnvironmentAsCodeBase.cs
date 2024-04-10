@@ -1,5 +1,6 @@
 ﻿using Definit.Configuration;
 using Definit.Validation.FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 
 namespace CodeOps.EnvironmentAsCode;
@@ -38,6 +39,7 @@ public abstract class EnvironmentAsCodeBase<TEnvs>
     {
         return EnvironmentSetting.Create(configuration).Match(
             valid => new EnvironmentAsCodeName(valid.ValidValue),
+            errors => throw new ValidationException(errors.Message),
             errors => throw errors.ToException());
     }
     

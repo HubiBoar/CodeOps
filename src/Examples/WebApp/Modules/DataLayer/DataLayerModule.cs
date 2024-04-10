@@ -4,7 +4,7 @@ using Momolith.Modules;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataLayer;
+namespace Examples.WebApp.Modules.DataLayer;
 
 public class DataLayerModule : Module
 {

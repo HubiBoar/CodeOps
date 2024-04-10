@@ -8,7 +8,7 @@ using AppService = CodeOps.InfrastructureAsCode.Azure.AzureAppServiceProvider;
 using Container = CodeOps.InfrastructureAsCode.Azure.AzureContainerRegistryProvider;
 using CodeOps.DeploymentAsCode;
 
-namespace Examples.WebProject;
+namespace Examples.WebApp;
 
 internal sealed partial class Environment :
     InfraAsCode.IEntry<IDeployCode>,
@@ -39,7 +39,7 @@ internal sealed partial class Environment :
             AppService.AppName appName,
             AppServiceSkuDescription sku)
         {
-            return context.AddAzureAppService(this.GetArgument<AzureOptions>(), planName, appName, sku, "app", this);
+            return context.AddAzureAppService(GetAzureOptions(), planName, appName, sku, "app", this);
         }
     }
 
@@ -60,7 +60,7 @@ internal sealed partial class Environment :
             ContainerRegistrySkuName sku)
         {
             return new Container(name, sku)
-                .InfraAsCode(this.GetArgument<AzureOptions>(), context);
+                .InfraAsCode(GetAzureOptions(), context);
         }
     }
 }

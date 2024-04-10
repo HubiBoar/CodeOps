@@ -1,6 +1,6 @@
 using CodeOps.EnvironmentAsCode;
 
-namespace Examples.WebProject;
+namespace Examples.WebApp;
 
 internal sealed partial class Environment : EnvironmentAsCode<
     Environment.Prod,

@@ -11,9 +11,9 @@
     <None Include="../../LICENSE" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 
-
   <ItemGroup>
     <PackageReference Include="Definit.Validation" />
+    <PackageReference Include="Definit.Result" />
     <PackageReference Include="Definit.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>

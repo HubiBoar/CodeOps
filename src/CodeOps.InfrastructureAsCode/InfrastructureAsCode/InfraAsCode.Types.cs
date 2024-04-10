@@ -1,4 +1,6 @@
-﻿using OneOf;
+﻿using CodeOps.EnvironmentAsCode;
+using Definit.Validation.FluentValidation;
+using OneOf;
 using OneOf.Else;
 
 namespace CodeOps.InfrastructureAsCode;
@@ -6,6 +8,18 @@ namespace CodeOps.InfrastructureAsCode;
 public sealed partial class InfraAsCode
 {
     public sealed record Enabled(bool IsEnabled);
+
+    public struct EnabledArgument : ArgumentAsCode.IArgument<EnabledArgument, Enabled, bool, IsNotNull<bool>>
+    {
+        public static string SectionName => "InfraAsCode";
+
+        public static string Shortcut => "iac";
+
+        public static string Name => "infra-as-code";
+
+        public static Enabled Map(bool value) => new (value);
+    }
+
     public sealed record Get();
     public sealed record Provision();
 
@@ -42,7 +56,7 @@ public sealed partial class InfraAsCode
 public static class InfraAsCodeHelper
 {
     public static Task<T> CreateComponent<T>(
-        InfraAsCode.IEntry<T> infraAsCode,
+        this InfraAsCode.IEntry<T> infraAsCode,
         InfraAsCode.Enabled getOrProvision)
         where T : InfraAsCode.IComponent
     {
@@ -51,6 +65,19 @@ public static class InfraAsCodeHelper
 
         return entry.CreateComponent(getOrProvision);
     }
+
+    public static Task<T> CreateComponent<T>(
+        this InfraAsCode.IEntry<T> infraAsCode,
+        ArgumentAsCode.IEntry<InfraAsCode.Enabled> getOrProvision)
+        where T : InfraAsCode.IComponent
+    {
+        var context = new InfraAsCode.Context<T>();
+        var entry = infraAsCode.InfrastructureAsCode(context);
+        var argument = getOrProvision.GetArgument();
+
+        return entry.CreateComponent(argument);
+    }
+
 
     public static Task<T> Get<T>(
         this InfraAsCode.Get get,

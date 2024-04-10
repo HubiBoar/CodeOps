@@ -1,7 +1,7 @@
 using CodeOps.ConfigurationAsCode;
-using CodeOps.EnvironmentAsCode;
+using CodeOps.ArgumentAsCode;
 
-namespace Examples.WebProject;
+namespace Examples.WebApp;
 
 internal sealed partial class Environment :
     ArgumentAsCode.IEntry<ConfigAsCode.Enabled>

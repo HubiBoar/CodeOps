@@ -6,11 +6,10 @@
 
   <!-- Definit -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Containers.ContainerRegistry" Version="1.1.1" />
-    <PackageVersion Include="Azure.ResourceManager.AppService" Version="1.0.2" />
     <PackageVersion Include="Definit.Validation" Version="$(DefinitVersion)" />
     <PackageVersion Include="Definit.Configuration" Version="$(DefinitVersion)" />
     <PackageVersion Include="Definit.Utils" Version="$(DefinitVersion)" />
+    <PackageVersion Include="Definit.Result" Version="$(DefinitVersion)" />
   </ItemGroup>
   <!-- Microsoft -->
   <ItemGroup>
@@ -35,6 +34,8 @@
 
   <!-- Azure -->
   <ItemGroup>
+    <PackageVersion Include="Azure.Containers.ContainerRegistry" Version="1.1.1" />
+    <PackageVersion Include="Azure.ResourceManager.AppService" Version="1.0.2" />
     <PackageVersion Include="Azure.Identity" Version="1.10.3" />
     <PackageVersion Include="Azure.ResourceManager.Authorization" Version="1.1.0" />
     <PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.3.0" />

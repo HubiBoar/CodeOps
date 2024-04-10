@@ -7,7 +7,7 @@ using CodeOps.EnvironmentAsCode;
 using AppConfig = CodeOps.ConfigurationAsCode.Azure.AzureAppConfigurationProvider;
 using KeyVault = CodeOps.ConfigurationAsCode.Azure.AzureKeyVaultProvider;
 
-namespace Examples.WebProject;
+namespace Examples.WebApp;
 
 internal sealed partial class Environment :
     InfraAsCode.IEntry<ConfigAsCode.Builder>,
@@ -35,7 +35,7 @@ internal sealed partial class Environment :
         {
             return AppConfig
                 .Create(name, label, sku, keyVaultName, keyVaultSku, this.GetArgument<ConfigAsCode.Enabled>(), Builder.Services, Builder.Configuration, this)
-                .InfraAsCode(this.GetArgument<AzureOptions>(), context);
+                .InfraAsCode(GetAzureOptions(), context);
         }
     }
 

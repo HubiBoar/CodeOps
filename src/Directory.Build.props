@@ -19,7 +19,7 @@
     <MomolithVersion>1.0.0</MomolithVersion>
     <EntityFramework>8.0.1</EntityFramework>
     <MicrosoftExtensionsVersion>8.0.0</MicrosoftExtensionsVersion>
-    <DefinitVersion>1.0.10</DefinitVersion>
+    <DefinitVersion>1.0.13</DefinitVersion>
     <OneOfElseVersion>1.0.3</OneOfElseVersion>
   </PropertyGroup>
 
