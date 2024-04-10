@@ -7,7 +7,7 @@ using OneOf;
 
 namespace CodeOps.ArgumentAsCode;
 
-public static partial class ArgumentAsCode
+public static partial class ArgAsCode
 {   
     public interface IArgument<TSelf, TValue, TValidationMethod> : IArgument<TSelf, TSelf, TValue, TValidationMethod>
         where TSelf : IArgument<TSelf, TValue, TValidationMethod>

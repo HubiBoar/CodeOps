@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj" />
+    <ProjectReference Include="..\..\CodeOps.ArgumentAsCode\CodeOps.ArgumentAsCode.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using OneOf;
 
 namespace CodeOps.ArgumentAsCode;
 
-public static partial class ArgumentAsCode
+public static partial class ArgAsCode
 {
     public sealed partial class Entry<TArgument>
         where TArgument : notnull

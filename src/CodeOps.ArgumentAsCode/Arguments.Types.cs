@@ -4,7 +4,7 @@ using OneOf.Else;
 
 namespace CodeOps.ArgumentAsCode;
 
-public static partial class ArgumentAsCode
+public static partial class ArgAsCode
 {   
     public record struct Next();
 

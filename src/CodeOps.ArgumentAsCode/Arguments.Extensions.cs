@@ -6,7 +6,7 @@ using OneOf.Types;
 
 namespace CodeOps.ArgumentAsCode;
 
-public static partial class ArgumentAsCode
+public static partial class ArgAsCode
 {
     public static OneOf<TValue, Next, ValidationErrors> ParseArgument<TValue>(
         string[] args,
