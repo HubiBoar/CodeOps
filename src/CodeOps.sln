@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.ConfigurationAsCode", "CodeOps.ConfigurationAsCode\ConfigurationAsCode\CodeOps.ConfigurationAsCode.csproj", "{09B68B98-0BAF-46F8-8B98-D2C0A5B7FFD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{7FE07440-5E33-4847-90A1-5E0CBC6707AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Examples\Samples\Samples.csproj", "{7FE07440-5E33-4847-90A1-5E0CBC6707AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.EnvironmentAsCode", "CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj", "{9E113326-51C3-4F5B-A045-CD229A8C541C}"
 EndProject
@@ -40,6 +40,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.InfrastructureAsCode.Azure.AppService", "CodeOps.InfrastructureAsCode\Azure\AppService\CodeOps.InfrastructureAsCode.Azure.AppService.csproj", "{2E33253F-8131-4752-A88C-07334BD1B86B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOps.DeploymentAsCode", "CodeOps.DeploymentAsCode\CodeOps.DeploymentAsCode.csproj", "{7564AE5B-3865-455F-A351-86C5AE2C3F7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{42F7E4F0-F097-45EE-9B68-3BEEBE25EE1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProject", "Examples\WebProject\ExampleProject.csproj", "{FDE5CEA0-842D-4FA8-AFA5-B863E7E7C531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +102,10 @@ Global
 		{7564AE5B-3865-455F-A351-86C5AE2C3F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7564AE5B-3865-455F-A351-86C5AE2C3F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7564AE5B-3865-455F-A351-86C5AE2C3F7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDE5CEA0-842D-4FA8-AFA5-B863E7E7C531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDE5CEA0-842D-4FA8-AFA5-B863E7E7C531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDE5CEA0-842D-4FA8-AFA5-B863E7E7C531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDE5CEA0-842D-4FA8-AFA5-B863E7E7C531}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A9A6DA0C-285E-402A-A1E4-525FB5B446B7} = {8AF90771-EC9C-46FF-94E5-12A6C4D0B949}
@@ -113,5 +121,6 @@ Global
 		{F7CBC7CB-B995-4DD8-85CF-C94F75E1BE95} = {61F06E23-1BA2-4F2A-AD17-576B26CFE33A}
 		{42D1CC85-CEE4-4706-B5A0-2F9C2D160F5D} = {61F06E23-1BA2-4F2A-AD17-576B26CFE33A}
 		{2E33253F-8131-4752-A88C-07334BD1B86B} = {61F06E23-1BA2-4F2A-AD17-576B26CFE33A}
+		{FDE5CEA0-842D-4FA8-AFA5-B863E7E7C531} = {42F7E4F0-F097-45EE-9B68-3BEEBE25EE1A}
 	EndGlobalSection
 EndGlobal

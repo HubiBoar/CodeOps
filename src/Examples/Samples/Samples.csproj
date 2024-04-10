@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Definit.Validation" />
+    <PackageReference Include="Definit.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CodeOps.ConfigurationAsCode\ConfigurationAsCode\CodeOps.ConfigurationAsCode.csproj" />
+    <ProjectReference Include="..\..\CodeOps.EnvironmentAsCode\CodeOps.EnvironmentAsCode.csproj" />
+    <ProjectReference Include="..\..\CodeOps.ArgumentAsCode\CodeOps.ArgumentAsCode.csproj" />
+    <ProjectReference Include="..\..\CodeOps.ConfigurationAsCode\Providers\Azure\AppConfiguration\CodeOps.ConfigurationAsCode.Azure.AppConfiguration.csproj" />
+    <ProjectReference Include="..\..\CodeOps.ConfigurationAsCode\Providers\Azure\KeyVault\CodeOps.ConfigurationAsCode.Azure.KeyVault.csproj" />
+  </ItemGroup>
+
+</Project>

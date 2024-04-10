@@ -1,6 +1,8 @@
 using System.Text.Json;
+using CodeOps.EnvironmentAsCode;
 using CodeOps.InfrastructureAsCode;
 using Definit.Validation;
+using Definit.Validation.FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf;
@@ -12,6 +14,17 @@ public static partial class ConfigAsCode
 {
     public delegate OneOf<Success, ValidationErrors> RegisterConfig(IServiceCollection services, IConfiguration configuration);
     
+    public struct EnabledArgument : ArgumentAsCode.IArgument<EnabledArgument, Enabled, bool, IsNotNull<bool>>
+    {
+        public static string SectionName => "ConfigAsCode";
+
+        public static string Shortcut => "cac";
+
+        public static string Name => "config-as-code";
+
+        public static Enabled Map(bool value) => new (value);
+    }
+
     public sealed record Enabled(bool IsEnabled);
 
     public interface IEntry<TOptions>
