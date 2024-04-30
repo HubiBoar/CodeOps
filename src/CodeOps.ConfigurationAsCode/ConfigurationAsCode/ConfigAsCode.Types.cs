@@ -1,26 +1,25 @@
 using System.Text.Json;
-using CodeOps.EnvironmentAsCode;
 using CodeOps.InfrastructureAsCode;
 using Definit.Validation;
 using Definit.Validation.FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf;
-using Success = OneOf.Types.Success;
+using CodeOps.ArgumentAsCode;
 
 namespace CodeOps.ConfigurationAsCode;
 
 public static partial class ConfigAsCode
 {
-    public delegate OneOf<Success, ValidationErrors> RegisterConfig(IServiceCollection services, IConfiguration configuration);
+    public delegate ValidationResult RegisterConfig(IServiceCollection services, IConfiguration configuration);
     
-    public struct EnabledArgument : ArgumentAsCode.IArgument<EnabledArgument, Enabled, bool, IsNotNull<bool>>
+    public struct EnabledArgument : ArgAsCode.IArgument<EnabledArgument, Enabled, bool, IsNotNull<bool>>
     {
         public static string SectionName => "ConfigAsCode";
 
-        public static string Shortcut => "cac";
+        public static string ArgumentShortcut => "cac";
 
-        public static string Name => "config-as-code";
+        public static string ArgumentFullName => "config-as-code";
 
         public static Enabled Map(bool value) => new (value);
     }
@@ -50,12 +49,12 @@ public static partial class ConfigAsCode
 
     public sealed record Entry<TOptions>(
         Dictionary<Path, OneOf<Value, FiltersEnabledFor, FeatureFlag, Manual, Reference>> Entries,
-        Func<IConfiguration, OneOf<Success, ValidationErrors>> Validation)
+        Func<IConfiguration, ValidationResult> Validation)
     {
         public Entry(
             Path sectionName,
             OneOf<Value, FiltersEnabledFor, FeatureFlag, Manual, Reference> sectionValue,
-            Func<IConfiguration, OneOf<Success, ValidationErrors>> validation) :
+            Func<IConfiguration, ValidationResult> validation) :
             this(
                 new Dictionary<Path, OneOf<Value,  FiltersEnabledFor, FeatureFlag, Manual, Reference>>
                 {

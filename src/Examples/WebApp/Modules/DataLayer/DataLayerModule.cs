@@ -3,10 +3,13 @@ using CodeOps.InfrastructureAsCode.Azure;
 using Momolith.Modules;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using CodeOps.ArgumentAsCode;
+using Definit.Validation.FluentValidation;
+using CodeOps.EnvironmentAsCode;
 
 namespace Examples.WebApp.Modules.DataLayer;
 
-public class DataLayerModule : Module
+public sealed class DataLayerModule : Module
 {
     private readonly List<Func<IHost, Task>> _migrations;
     private readonly Action<DbContextOptionsBuilder>? _optionsAction;
@@ -44,5 +47,67 @@ public class DataLayerModule : Module
         var context = scope.ServiceProvider.GetRequiredService<T>();
 
         await context.Database.MigrateAsync();
+    }
+
+    public sealed record MigrationArg(bool Value) : ArgAsCode.IArgument<MigrationArg, bool, IsNotNull<bool>>
+    {
+        public static string SectionName => "DataLayerMigration";
+
+        public static string ArgumentShortcut => "cac";
+
+        public static string ArgumentFullName => "config-as-code";
+
+        public static MigrationArg Map(bool value) => new (value);
+    }
+}
+
+public static class DataLayerModuleExtensions
+{
+    public static Task<DataLayerModule> Migrate(this Task<DataLayerModule> module, IHostExtender host, EnvAsCode.ModeArg shouldMigrate)
+    {
+        if(shouldMigrate.Value)
+        {
+            host.ExtendAsync(async host =>
+            {
+                var mod = await module;
+                await mod.Migrate(host);
+            });
+        }
+
+        return module;
+    }
+
+    public static Task<DataLayerModule> Migrate(this Task<DataLayerModule> module, IHostExtender host, DataLayerModule.MigrationArg shouldMigrate)
+    {
+        if(shouldMigrate.Value)
+        {
+            host.ExtendAsync(async host =>
+            {
+                var mod = await module;
+                await mod.Migrate(host);
+            });
+        }
+
+        return module;
+    }
+
+    public static DataLayerModule Migrate(this DataLayerModule module, IHostExtender host, EnvAsCode.ModeArg shouldMigrate)
+    {
+        if(shouldMigrate.Value)
+        {
+            host.ExtendAsync(module.Migrate);
+        }
+
+        return module;
+    }
+
+    public static DataLayerModule Migrate(this DataLayerModule module, IHostExtender host, DataLayerModule.MigrationArg shouldMigrate)
+    {
+        if(shouldMigrate.Value)
+        {
+            host.ExtendAsync(module.Migrate);
+        }
+
+        return module;
     }
 }

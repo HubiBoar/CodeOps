@@ -1,92 +1,107 @@
-﻿namespace CodeOps.EnvironmentAsCode;
+﻿using Microsoft.Extensions.Configuration;
 
-public abstract class EnvironmentAsCode<T0, T1> : EnvironmentAsCodeBase<EnvironmentAsCode<T0, T1>>, IEnvironmentAsCode
-    where T0 : IEnvironmentVersion
-    where T1 : IEnvironmentVersion
+namespace CodeOps.EnvironmentAsCode;
+
+public static partial class EnvAsCode
 {
-    public static IReadOnlyCollection<EnvironmentName> Environments { get; } =
-    [
-        new EnvironmentName(T0.Name),
-        new EnvironmentName(T1.Name)
-    ];
-    
-    protected EnvironmentAsCode(EnvironmentAsCodeName environment) : base(environment)
+    public interface IEnvironment
     {
+        public static abstract IReadOnlyCollection<Name> Environments { get; }
     }
 
-    public TReturnValue MatchEnvironment<TReturnValue>(
-        Func<Environment<T0>, TReturnValue> onT0,   
-        Func<Environment<T1>, TReturnValue> onT1)
+    public abstract class Base<T0, T1> : 
+        Base.ConfigArgs,
+        IEnvironment
+            where T0 : IVersion
+            where T1 : IVersion
     {
-        return Parameters.Index switch
+        public new static IReadOnlyCollection<Name> Environments { get; } =
+        [
+            new Name(T0.Name),
+            new Name(T1.Name)
+        ];
+        
+        protected Base(IConfiguration configuration, string[] args) : base(configuration, args, Environments, T0.Name)
         {
-            0 => onT0(new Environment<T0>()),
-            _ => onT1(new Environment<T1>())
-        };
-    }
-}
+        }
 
-public abstract class EnvironmentAsCode<T0, T1, T2> : EnvironmentAsCodeBase<EnvironmentAsCode<T0, T1, T2>>, IEnvironmentAsCode
-    where T0 : IEnvironmentVersion
-    where T1 : IEnvironmentVersion
-    where T2 : IEnvironmentVersion
-{
-    public static IReadOnlyCollection<EnvironmentName> Environments { get; } = 
-    [
-        new EnvironmentName(T0.Name),
-        new EnvironmentName(T1.Name),
-        new EnvironmentName(T2.Name)
-    ];
-    
-    protected EnvironmentAsCode(EnvironmentAsCodeName environment) : base(environment)
-    {
-    }
-
-    public TReturnValue MatchEnvironment<TReturnValue>(
-        Func<Environment<T0>, TReturnValue> onT0,
-        Func<Environment<T1>, TReturnValue> onT1,
-        Func<Environment<T2>, TReturnValue> onT2)
-    {
-        return Parameters.Index switch
+        public TReturnValue MatchEnvironment<TReturnValue>(
+            Func<Environment<T0>, TReturnValue> onT0,   
+            Func<Environment<T1>, TReturnValue> onT1)
         {
-            0 => onT0(new Environment<T0>()),
-            1 => onT1(new Environment<T1>()),
-            _ => onT2(new Environment<T2>()),
-        };
-    }
-}
-
-
-public abstract class EnvironmentAsCode<T0, T1, T2, T3> : EnvironmentAsCodeBase<EnvironmentAsCode<T0, T1, T2, T3>>, IEnvironmentAsCode
-    where T0 : IEnvironmentVersion
-    where T1 : IEnvironmentVersion
-    where T2 : IEnvironmentVersion
-    where T3 : IEnvironmentVersion
-{
-    public static IReadOnlyCollection<EnvironmentName> Environments { get; } =
-    [
-        new EnvironmentName(T0.Name),
-        new EnvironmentName(T1.Name),
-        new EnvironmentName(T2.Name),
-        new EnvironmentName(T3.Name)
-    ];
-    
-    protected EnvironmentAsCode(EnvironmentAsCodeName environment) : base(environment)
-    {
+            return EnvironmentIndex switch
+            {
+                0 => onT0(new Environment<T0>()),
+                _ => onT1(new Environment<T1>())
+            };
+        }
     }
 
-    public TReturnValue MatchEnvironment<TReturnValue>(
-        Func<Environment<T0>, TReturnValue> onT0,
-        Func<Environment<T1>, TReturnValue> onT1,
-        Func<Environment<T2>, TReturnValue> onT2,
-        Func<Environment<T3>, TReturnValue> onT3)
+    public abstract class Base<T0, T1, T2> :
+        Base.ConfigArgs,
+        IEnvironment
+            where T0 : IVersion
+            where T1 : IVersion
+            where T2 : IVersion
     {
-        return Parameters.Index switch
+        public new static IReadOnlyCollection<Name> Environments { get; } = 
+        [
+            new Name(T0.Name),
+            new Name(T1.Name),
+            new Name(T2.Name)
+        ];
+
+        protected Base(IConfiguration configuration, string[] args) : base(configuration, args, Environments, T0.Name)
         {
-            0 => onT0(new Environment<T0>()),
-            1 => onT1(new Environment<T1>()),
-            2 => onT2(new Environment<T2>()),
-            _ => onT3(new Environment<T3>()),
-        };
+        }
+
+        public TReturnValue MatchEnvironment<TReturnValue>(
+            Func<Environment<T0>, TReturnValue> onT0,
+            Func<Environment<T1>, TReturnValue> onT1,
+            Func<Environment<T2>, TReturnValue> onT2)
+        {
+            return EnvironmentIndex switch
+            {
+                0 => onT0(new Environment<T0>()),
+                1 => onT1(new Environment<T1>()),
+                _ => onT2(new Environment<T2>()),
+            };
+        }
+    }
+
+    public abstract class Base<T0, T1, T2, T3> :
+        Base.ConfigArgs,
+        IEnvironment
+            where T0 : IVersion
+            where T1 : IVersion
+            where T2 : IVersion
+            where T3 : IVersion
+    {
+        public new static IReadOnlyCollection<Name> Environments { get; } =
+        [
+            new Name(T0.Name),
+            new Name(T1.Name),
+            new Name(T2.Name),
+            new Name(T3.Name)
+        ];
+
+        protected Base(IConfiguration configuration, string[] args) : base(configuration, args, Environments, T0.Name)
+        {
+        }
+
+        public TReturnValue MatchEnvironment<TReturnValue>(
+            Func<Environment<T0>, TReturnValue> onT0,
+            Func<Environment<T1>, TReturnValue> onT1,
+            Func<Environment<T2>, TReturnValue> onT2,
+            Func<Environment<T3>, TReturnValue> onT3)
+        {
+            return EnvironmentIndex switch
+            {
+                0 => onT0(new Environment<T0>()),
+                1 => onT1(new Environment<T1>()),
+                2 => onT2(new Environment<T2>()),
+                _ => onT3(new Environment<T3>()),
+            };
+        }
     }
 }

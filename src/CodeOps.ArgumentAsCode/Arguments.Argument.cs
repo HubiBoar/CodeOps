@@ -1,5 +1,6 @@
 using Definit.Configuration;
 using Definit.Primitives;
+using Definit.Results;
 using Definit.Utils;
 using Definit.Validation;
 using Microsoft.Extensions.Configuration;
@@ -30,19 +31,21 @@ public static partial class ArgAsCode
         where TValue : notnull
         where TValidationMethod : IValidate<TValue>
     {
-        static OneOf<TArgument, Next, ValidationErrors> IArgsArgument<TSelf, TArgument>.ParseArgs<T>(string[] args)
+        static OneOf<TArgument, Next, ValidationErrors, Error> IArgsArgument<TSelf, TArgument>.ParseArgs<T>(string[] args)
         {
-            var parsedValue = ParseArgument<TValue>(args, T.Shortcut, T.Name, value => 
+            var parsedValue = ParseArgument<TValue>(args, T.ArgumentShortcut, T.ArgumentFullName, value => 
                 value
                     .IsValid<TValue, TValidationMethod>()
-                    .Match<OneOf<OneOf.Types.Success, ValidationErrors>>(
-                        _ => new OneOf.Types.Success(),
+                    .Match<ValidationResult>(
+                        success => Success.Instance,
+                        error => error,
                         error => error));
 
             return parsedValue
-                .Match<OneOf<TArgument, Next, ValidationErrors>>(
+                .Match<OneOf<TArgument, Next, ValidationErrors, Error>>(
                     val => T.Map(val),
                     next => next,
+                    error => error,
                     error => error);
         }
     }
@@ -57,10 +60,10 @@ public static partial class ArgAsCode
     public interface IArgsArgument<TSelf, TArgument>
         where TSelf : IArgsArgument<TSelf, TArgument>
     {
-        public static abstract string Shortcut { get; }
-        public static abstract string Name { get; }
+        public static abstract string ArgumentShortcut { get; }
+        public static abstract string ArgumentFullName { get; }
 
-        public static abstract OneOf<TArgument, Next, ValidationErrors> ParseArgs<T>(string[] args)
+        public static abstract OneOf<TArgument, Next, ValidationErrors, Error> ParseArgs<T>(string[] args)
             where T : TSelf;
     }
 
@@ -70,7 +73,7 @@ public static partial class ArgAsCode
         where TValue : notnull
         where TValidationMethod : IValidate<TValue>
     {
-        static OneOf<TArgument, Next, ValidationErrors> IConfigArgument<TSelf, TArgument>.ParseConfig<T>(IConfiguration configuration)
+        static OneOf<TArgument, Next, ValidationErrors, Error> IConfigArgument<TSelf, TArgument>.ParseConfig<T>(IConfiguration configuration)
         {
             var sectionName = T.SectionName;
             var section = configuration.GetSection(sectionName);
@@ -87,8 +90,9 @@ public static partial class ArgAsCode
 
             return value
                 .IsValid<TValue, TValidationMethod>()
-                .Match<OneOf<TArgument, Next, ValidationErrors>>(
+                .Match<OneOf<TArgument, Next, ValidationErrors, Error>>(
                     valid => T.Map(value),
+                    error => error,
                     error => error);
         }
     }
@@ -104,7 +108,7 @@ public static partial class ArgAsCode
         where TSelf : IConfigArgument<TSelf, TArgument>
         where TArgument : notnull    
     {
-        public static abstract OneOf<TArgument, Next, ValidationErrors> ParseConfig<T>(IConfiguration configuration)
+        public static abstract OneOf<TArgument, Next, ValidationErrors, Error> ParseConfig<T>(IConfiguration configuration)
             where T : TSelf;
     }
 

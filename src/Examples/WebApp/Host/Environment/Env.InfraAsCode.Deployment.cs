@@ -1,7 +1,5 @@
-using CodeOps.ArgumentAsCode;
 using CodeOps.InfrastructureAsCode;
 using CodeOps.InfrastructureAsCode.Azure;
-using CodeOps.EnvironmentAsCode;
 using Azure.ResourceManager.ContainerRegistry.Models;
 using Azure.ResourceManager.AppService.Models;
 using AppService = CodeOps.InfrastructureAsCode.Azure.AzureAppServiceProvider;

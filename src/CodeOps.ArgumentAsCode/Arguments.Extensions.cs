@@ -1,18 +1,18 @@
 using System.Text.Json;
+using Definit.Results;
 using Definit.Validation;
 using Microsoft.Extensions.Configuration;
 using OneOf;
-using OneOf.Types;
 
 namespace CodeOps.ArgumentAsCode;
 
 public static partial class ArgAsCode
 {
-    public static OneOf<TValue, Next, ValidationErrors> ParseArgument<TValue>(
+    public static OneOf<TValue, Next, ValidationErrors, Error> ParseArgument<TValue>(
         string[] args,
         string shortcut,
         string fullName,
-        Func<string, OneOf<TValue, ValidationErrors>> factory)
+        Func<string, OneOf<TValue, ValidationErrors, Error>> factory)
         where TValue : notnull
     {
         shortcut = $"-{shortcut}=";
@@ -35,16 +35,17 @@ public static partial class ArgAsCode
         }
 
         return factory(argsValue)
-            .Match<OneOf<TValue, Next, ValidationErrors>>(
+            .Match<OneOf<TValue, Next, ValidationErrors, Error>>(
                 value => value,
+                error => error,
                 error => error);
     }
 
-    public static OneOf<TValue, Next, ValidationErrors> ParseArgument<TValue>(
+    public static OneOf<TValue, Next, ValidationErrors, Error> ParseArgument<TValue>(
         string[] args,
         string shortcut,
         string fullName,
-        Func<TValue, OneOf<Success, ValidationErrors>> validate)
+        Func<TValue, ValidationResult> validate)
         where TValue : notnull
     {
         return ParseArgument(args, shortcut, fullName, argsValue => 
@@ -57,8 +58,9 @@ public static partial class ArgAsCode
             }
 
             return validate(value)
-                .Match<OneOf<TValue, ValidationErrors>>(
+                .Match<OneOf<TValue, ValidationErrors, Error>>(
                     success => value,
+                    error => error,
                     error => error);
         });
     }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Azure.Core;
 using CodeOps.EnvironmentAsCode;
+using CodeOps.ArgumentAsCode;
 
 namespace CodeOps.ConfigurationAsCode.Azure;
 

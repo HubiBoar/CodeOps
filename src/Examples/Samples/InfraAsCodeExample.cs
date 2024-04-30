@@ -6,13 +6,14 @@ using CodeOps.InfrastructureAsCode.Azure;
 using CodeOps.EnvironmentAsCode;
 using AppConfig = CodeOps.ConfigurationAsCode.Azure.AzureAppConfigurationProvider;
 using KeyVault = CodeOps.ConfigurationAsCode.Azure.AzureKeyVaultProvider;
+using CodeOps.ArgumentAsCode;
 
 namespace Samples;
 
 internal sealed partial class Environment :
     InfraAsCode.IEntry<ConfigAsCode.Builder>,
     ConfigAsCode.IEntry<Sentinel>,
-    ArgumentAsCode.IEntry<AzureOptions>
+    ArgAsCode.IEntry<AzureOptions>
 {
     public InfraAsCode.Entry<ConfigAsCode.Builder> InfrastructureAsCode(InfraAsCode.Context<ConfigAsCode.Builder> context)
     {
@@ -58,7 +59,7 @@ internal sealed partial class Environment :
             test => context.Value(1));
     }
 
-    public ArgumentAsCode.Entry<AzureOptions> ArgumentAsCode(ArgumentAsCode.Context<AzureOptions> context)
+    public ArgAsCode.Entry<AzureOptions> ArgumentAsCode(ArgAsCode.Context<AzureOptions> context)
     {
         return MatchEnvironment(
             prod => new AzureOptions(AzureLocation.WestEurope, "Prod-RG", "Prod-Sub"), 

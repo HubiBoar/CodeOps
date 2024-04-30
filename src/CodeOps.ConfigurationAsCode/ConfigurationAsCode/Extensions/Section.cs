@@ -9,7 +9,7 @@ namespace CodeOps.ConfigurationAsCode;
 
 public static class SectionExtensions
 {
-    public static OneOf<Success, ValidationErrors> AddConfig<TSection>(
+    public static ValidationResult AddConfig<TSection>(
         this ConfigAsCode.Builder builder,        
         ConfigAsCode.IEntry<TSection> configAsCode)
         where TSection : ConfigSection<TSection>, ISectionName, IConfigObject<TSection>, new()
@@ -28,7 +28,7 @@ public static class SectionExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(TSection.SectionName),
             new ConfigAsCode.Value(json),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<TSection> Manual<TSection>(
@@ -38,7 +38,7 @@ public static class SectionExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(TSection.SectionName),
             new ConfigAsCode.Manual(),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<TSection> Reference<TSection>(
@@ -49,7 +49,7 @@ public static class SectionExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(TSection.SectionName),
             new ConfigAsCode.Reference(new ConfigAsCode.Path(path)),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
     //Per value
@@ -66,7 +66,7 @@ public static class SectionExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(sectionName),
             new ConfigAsCode.Value(json),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<TSection> Manual<TSection, TValue>(
@@ -79,7 +79,7 @@ public static class SectionExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(sectionName),
             new ConfigAsCode.Manual(),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
 

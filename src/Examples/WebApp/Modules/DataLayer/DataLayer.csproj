@@ -13,6 +13,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\CodeOps.InfrastructureAsCode\Azure\Sql\CodeOps.InfrastructureAsCode.Azure.Sql.csproj" />
+    <ProjectReference Include="..\..\..\..\CodeOps.ArgumentAsCode\CodeOps.ArgumentAsCode.csproj" />
   </ItemGroup>
 
 </Project>

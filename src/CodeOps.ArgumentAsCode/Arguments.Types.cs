@@ -1,3 +1,4 @@
+using Definit.Results;
 using Definit.Validation;
 using OneOf;
 using OneOf.Else;
@@ -35,7 +36,7 @@ public static partial class ArgAsCode
     public sealed partial class Entry<TArgument>
         where TArgument : notnull
     {
-        private readonly List<Func<OneOf<TArgument, Next, ValidationErrors>>> _factories = [];
+        private readonly List<Func<OneOf<TArgument, Next, ValidationErrors, Error>>> _factories = [];
 
         private readonly TArgument _defaultValue;
 

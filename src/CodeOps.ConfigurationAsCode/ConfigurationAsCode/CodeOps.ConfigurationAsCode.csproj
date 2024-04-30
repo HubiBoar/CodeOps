@@ -11,7 +11,6 @@
     <None Include="../../../LICENSE" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 
-
   <ItemGroup>
     <PackageReference Include="Definit.Validation" />
     <PackageReference Include="Definit.Configuration" />
@@ -20,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CodeOps.InfrastructureAsCode\InfrastructureAsCode\CodeOps.InfrastructureAsCode.csproj" />
+    <ProjectReference Include="..\..\CodeOps.ArgumentAsCode\CodeOps.ArgumentAsCode.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ namespace CodeOps.ConfigurationAsCode;
 
 public static class ValueExtensions
 {
-    public static OneOf<Success, ValidationErrors> AddConfig<TSection>(
+    public static ValidationResult AddConfig<TSection>(
         this ConfigAsCode.Builder builder,        
         ConfigAsCode.IEntry<TSection> configAsCode)
         where TSection : IConfigValue, new()
@@ -26,7 +26,7 @@ public static class ValueExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(TSection.SectionName),
             new ConfigAsCode.Value(json),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<TSection> Manual<TSection>(
@@ -36,7 +36,7 @@ public static class ValueExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(TSection.SectionName),
             new ConfigAsCode.Manual(),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<TSection> Reference<TSection>(
@@ -47,6 +47,6 @@ public static class ValueExtensions
         return new ConfigAsCode.Entry<TSection>(
             new ConfigAsCode.Path(TSection.SectionName),
             new ConfigAsCode.Reference(new ConfigAsCode.Path(path)),
-            TSection.IsValid);
+            TSection.ValidateConfiguration);
     }
 }

@@ -4,9 +4,9 @@ using CodeOps.ArgumentAsCode;
 namespace Examples.WebApp;
 
 internal sealed partial class Environment :
-    ArgumentAsCode.IEntry<ConfigAsCode.Enabled>
+    ArgAsCode.IEntry<ConfigAsCode.Enabled>
 {
-    public ArgumentAsCode.Entry<ConfigAsCode.Enabled> ArgumentAsCode(ArgumentAsCode.Context<ConfigAsCode.Enabled> context)
+    public ArgAsCode.Entry<ConfigAsCode.Enabled> ArgumentAsCode(ArgAsCode.Context<ConfigAsCode.Enabled> context)
     {
         return MatchEnvironment(
             prod =>

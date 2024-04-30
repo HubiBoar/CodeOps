@@ -30,6 +30,7 @@ internal sealed class AppConfigurationRefresher : BackgroundService
                 await _refresherDelay()
                     .Match(
                         v => Task.Delay(v.ValidValue, stoppingToken),
+                        _ => Task.Delay(1000, stoppingToken),
                         _ => Task.Delay(1000, stoppingToken));
 
             }

@@ -3,6 +3,7 @@ using Azure.ResourceManager.AppService;
 using Azure.ResourceManager.AppService.Models;
 using CodeOps.EnvironmentAsCode;
 using CodeOps.DeploymentAsCode;
+using CodeOps.ArgumentAsCode;
 
 namespace CodeOps.InfrastructureAsCode.Azure;
 

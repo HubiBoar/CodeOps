@@ -9,13 +9,13 @@ public sealed partial class InfraAsCode
 {
     public sealed record Enabled(bool IsEnabled);
 
-    public struct EnabledArgument : ArgumentAsCode.IArgument<EnabledArgument, Enabled, bool, IsNotNull<bool>>
+    public struct EnabledArgument : ArgumentAsCode.ArgAsCode.IArgument<EnabledArgument, Enabled, bool, IsNotNull<bool>>
     {
         public static string SectionName => "InfraAsCode";
 
-        public static string Shortcut => "iac";
+        public static string ArgumentShortcut => "iac";
 
-        public static string Name => "infra-as-code";
+        public static string ArgumentFullName => "infra-as-code";
 
         public static Enabled Map(bool value) => new (value);
     }
@@ -68,7 +68,7 @@ public static class InfraAsCodeHelper
 
     public static Task<T> CreateComponent<T>(
         this InfraAsCode.IEntry<T> infraAsCode,
-        ArgumentAsCode.IEntry<InfraAsCode.Enabled> getOrProvision)
+        ArgAsCode.IEntry<InfraAsCode.Enabled> getOrProvision)
         where T : InfraAsCode.IComponent
     {
         var context = new InfraAsCode.Context<T>();

@@ -1,9 +1,9 @@
 using CodeOps.InfrastructureAsCode;
+using Definit.Results;
 using Definit.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OneOf;
-using Success = OneOf.Types.Success;
+using OneOf.Else;
 
 namespace CodeOps.ConfigurationAsCode;
 
@@ -26,13 +26,13 @@ public static partial class ConfigAsCode
             _source.Register(services, _config);
         }
         
-        public OneOf<Success, ValidationErrors> AddConfig<TOptions>(RegisterConfig factory, IEntry<TOptions> configAsCode)
+        public ValidationResult AddConfig<TOptions>(RegisterConfig factory, IEntry<TOptions> configAsCode)
         {
             return ConfigAsCode.AddConfig(factory, _services, _config, _enabled, _source , configAsCode);
         }
     }
 
-    public static OneOf<Success, ValidationErrors> AddConfig<TOptions>(
+    public static ValidationResult AddConfig<TOptions>(
         this ISource provider,
         RegisterConfig factory,
         IServiceCollection services,
@@ -43,7 +43,7 @@ public static partial class ConfigAsCode
         return AddConfig(factory, services, config, enabled, provider, configAsCode);
     }
 
-    public static OneOf<Success, ValidationErrors> AddConfig<TOptions>(
+    public static ValidationResult AddConfig<TOptions>(
         RegisterConfig factory,
         IServiceCollection services,
         IConfigurationManager config,
@@ -56,18 +56,25 @@ public static partial class ConfigAsCode
             return factory(services, config);
         }
 
-        return AddEntry(provider, configAsCode)
-            .Match(
-                values => 
-                {
-                    provider.Register(services, config);
+        if(AddEntry(provider, configAsCode)
+            .Is(out Error error)
+            .Else(out var remainder))
+        {
+            return error;
+        }
+        if(remainder
+            .Is(out ValidationErrors validationErrors)
+            .Else(out Success _))
+        {
+            return validationErrors;
+        }
+        
+        provider.Register(services, config);
 
-                    return factory(services, config);
-                },
-                errors => errors);
+        return factory(services, config);
     }
 
-    public static OneOf<Success, ValidationErrors> AddEntry<TOptions>(ISource provider, IEntry<TOptions> configAsCode)
+    public static ValidationResult AddEntry<TOptions>(ISource provider, IEntry<TOptions> configAsCode)
     {
         var newEntry = configAsCode.ConfigurationAsCode(new Context<TOptions>());
 

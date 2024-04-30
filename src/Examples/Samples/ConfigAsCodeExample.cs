@@ -1,4 +1,5 @@
-﻿using CodeOps.ConfigurationAsCode;
+﻿using CodeOps.ArgumentAsCode;
+using CodeOps.ConfigurationAsCode;
 using CodeOps.EnvironmentAsCode;
 using Definit.Configuration;
 using Definit.Validation;
@@ -26,7 +27,7 @@ internal sealed class Section : ConfigSection<Section>
 
     public string Value3 { get; } = string.Empty;
 
-    protected override OneOf<Success, ValidationErrors> Validate(Validator<Section> context)
+    protected override ValidationResult Validate(Validator<Section> context)
     {
         return context.Fluent(validator =>
         {
@@ -58,7 +59,7 @@ internal sealed partial class Environment :
     ConfigAsCode.IEntry<FeatureToggle<Feature>>,
     ConfigAsCode.IEntry<Section>,
     ConfigAsCode.IEntry<Value>,
-    ArgumentAsCode.IEntry<ConfigAsCode.Enabled>
+    ArgAsCode.IEntry<ConfigAsCode.Enabled>
 {
     public ConfigAsCode.Entry<FeatureToggle<Feature>> ConfigurationAsCode(ConfigAsCode.Context<FeatureToggle<Feature>> context)
     {
@@ -107,7 +108,7 @@ internal sealed partial class Environment :
             test => context.Manual());
     }
 
-    public ArgumentAsCode.Entry<ConfigAsCode.Enabled> ArgumentAsCode(ArgumentAsCode.Context<ConfigAsCode.Enabled> context)
+    public ArgAsCode.Entry<ConfigAsCode.Enabled> ArgumentAsCode(ArgAsCode.Context<ConfigAsCode.Enabled> context)
     {
         return MatchEnvironment(
             prod =>
@@ -123,13 +124,13 @@ internal sealed partial class Environment :
             test => new ConfigAsCode.Enabled(true));
     }
 
-    private struct ConfigAsCodeEnabled : ArgumentAsCode.IArgument<ConfigAsCodeEnabled, ConfigAsCode.Enabled, bool, IsNotNull<bool>>
+    private struct ConfigAsCodeEnabled : ArgAsCode.IArgument<ConfigAsCodeEnabled, ConfigAsCode.Enabled, bool, IsNotNull<bool>>
     {
         public static string SectionName => "ConfigAsCode";
 
-        public static string Shortcut => "cac";
+        public static string ArgumentShortcut => "cac";
 
-        public static string Name => "config-as-code";
+        public static string ArgumentFullName => "config-as-code";
 
         public static ConfigAsCode.Enabled Map(bool value) => new (value);
     }

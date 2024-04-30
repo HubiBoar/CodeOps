@@ -2,6 +2,7 @@
 using Azure.ResourceManager.Models;
 using Azure.ResourceManager.Sql;
 using Azure.ResourceManager.Sql.Models;
+using CodeOps.ArgumentAsCode;
 using CodeOps.EnvironmentAsCode;
 
 namespace CodeOps.InfrastructureAsCode.Azure;

@@ -74,7 +74,7 @@ public static class FeatureToggle
 
 public static class FeatureToggleExtensions
 {
-    public static OneOf<Success, ValidationErrors> AddConfig<TSection>(
+    public static ValidationResult AddConfig<TSection>(
         this ConfigAsCode.Builder builder,        
         ConfigAsCode.IEntry<FeatureToggle<TSection>> configAsCode)
         where TSection : IFeatureName
@@ -95,7 +95,7 @@ public static class FeatureToggleExtensions
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
             new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
             features,
-            FeatureToggle<T>.IsValid);
+            FeatureToggle<T>.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<FeatureToggle<T>> Value<T>(
@@ -106,7 +106,7 @@ public static class FeatureToggleExtensions
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
             new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
             new ConfigAsCode.FeatureFlag(value),
-            FeatureToggle<T>.IsValid);
+            FeatureToggle<T>.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<FeatureToggle<T>> Manual<T>(
@@ -116,7 +116,7 @@ public static class FeatureToggleExtensions
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
             new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
             new ConfigAsCode.Manual(),
-            FeatureToggle<T>.IsValid);
+            FeatureToggle<T>.ValidateConfiguration);
     }
 
     public static ConfigAsCode.Entry<FeatureToggle<T>> Reference<T>(
@@ -127,6 +127,6 @@ public static class FeatureToggleExtensions
         return new ConfigAsCode.Entry<FeatureToggle<T>>(
             new ConfigAsCode.Path(FeatureToggle<T>.SectionName),
             new ConfigAsCode.Reference(new ConfigAsCode.Path(path)),
-            FeatureToggle<T>.IsValid);
+            FeatureToggle<T>.ValidateConfiguration);
     }
 }

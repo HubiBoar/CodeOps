@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using KeyVault = CodeOps.ConfigurationAsCode.Azure.AzureKeyVaultProvider;
 using AppConfig = CodeOps.ConfigurationAsCode.Azure.AzureAppConfigAsCodeSource;
 using CodeOps.EnvironmentAsCode;
+using CodeOps.ArgumentAsCode;
 
 namespace CodeOps.ConfigurationAsCode.Azure;
 

@@ -3,6 +3,7 @@ using Azure.ResourceManager.ContainerRegistry;
 using Azure.ResourceManager.ContainerRegistry.Models;
 using CodeOps.EnvironmentAsCode;
 using CodeOps.DeploymentAsCode;
+using CodeOps.ArgumentAsCode;
 
 namespace CodeOps.InfrastructureAsCode.Azure;
 
