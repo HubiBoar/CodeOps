@@ -138,3 +138,7 @@ public sealed partial class Environment :
 [![NuGet Version](https://img.shields.io/nuget/v/CodeOps.DeploymentAsCode)](https://www.nuget.org/packages/CodeOps.DeploymentAsCode/)
 
 **CodeOps.DeploymentAsCode** Is a library helping with easier application code deployment into <br>for example Azure Containers Registry as a Docker and then into Azure App Serivice.
+
+## License
+
+The code in this repo is licensed under the [MIT](LICENSE) license.
