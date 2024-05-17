@@ -85,9 +85,9 @@ public sealed partial class Environment :
 
 **CodeOps.ConfigurationAsCode** Is a library for managing configuration inside the application code, <br>with the ability to validate and deploy it to an external source of Configuration such as Azure AppConfiguration.
 
-It supports Values, Sections and FeatureToggles.
-It also supports manual and reference entires where Manual means that the value should already be added to the External Configuration Source and then the value will be only validated.
-Reference means that the value should be taken from other source such as Azure KevVault or different value in the Source.
+<br>It supports Values, Sections and FeatureToggles.
+<br>It also supports manual and reference entires where Manual means that the value should already be added to the External Configuration Source and then the value will be only validated.
+<br>Reference means that the value should be taken from other source such as Azure KevVault or different value in the Source.
 
 ```csharp
 public sealed partial class Environment :
