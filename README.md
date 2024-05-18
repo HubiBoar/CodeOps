@@ -2,7 +2,7 @@
 
 [![Release Status](https://img.shields.io/github/actions/workflow/status/HubiBoar/CodeOps/publish.yml)](https://github.com/HubiBoar/CodeOps/actions/workflows/publish.yml)
 
-**CodeOps** Is a framework aiming to move as much DevOps work from yamls etc. into C# as part of your application code.<br>
+**CodeOps** Is a set of libraries aiming to move as much DevOps work from yamls etc. into C# as part of your application code.<br>
 It is Cloud agnostic and can be extended to support any Cloud Provider, for now it focues on Azure.
 
 **This project and samples are still WORK IN PROGRESS.**
