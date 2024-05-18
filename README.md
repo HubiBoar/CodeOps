@@ -11,6 +11,7 @@ It is Cloud agnostic and can be extended to support any Cloud Provider, for now 
 ## [CodeOps.EnvironmentAsCode](src/Examples/WebApp/Host/Environment/Environment.cs)
 
 [![NuGet Version](https://img.shields.io/nuget/v/CodeOps.EnvironmentAsCode)](https://www.nuget.org/packages/CodeOps.EnvironmentAsCode/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/CodeOps.EnvironmentAsCode)](https://www.nuget.org/packages/CodeOps.EnvironmentAsCode/)
 
 **CodeOps.EnvironmentAsCode** Is a library for programmatically expressing environments for your app <br>such as Development, Test, Staging, Production etc.
 
@@ -46,6 +47,7 @@ public sealed partial class Environment : EnvironmentAsCode<
 ## [CodeOps.InfrastructureAsCode](src/Examples/WebApp/Host/Environment/InfraAsCode.DbConnection.cs)
 
 [![NuGet Version](https://img.shields.io/nuget/v/CodeOps.InfrastructureAsCode)](https://www.nuget.org/packages/CodeOps.InfrastructureAsCode/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/CodeOps.InfrastructureAsCode)](https://www.nuget.org/packages/CodeOps.InfrastructureAsCode/)
 
 **CodeOps.InfrastructureAsCode** Is a library for programmatically designing your Cloud Infrastructure.
 
@@ -82,6 +84,7 @@ public sealed partial class Environment :
 ## [CodeOps.ConfigurationAsCode](src/Examples/Samples/ConfigAsCodeExample.cs)
 
 [![NuGet Version](https://img.shields.io/nuget/v/CodeOps.ConfigurationAsCode)](https://www.nuget.org/packages/CodeOps.ConfigurationAsCode/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/CodeOps.ConfigurationAsCode)](https://www.nuget.org/packages/CodeOps.ConfigurationAsCode/)
 
 **CodeOps.ConfigurationAsCode** Is a library for managing configuration inside the application code, <br>with the ability to validate and deploy it to an external source of Configuration such as Azure AppConfiguration.
 
@@ -139,6 +142,7 @@ public sealed partial class Environment :
 ## [CodeOps.DeploymentAsCode](src/Examples/WebApp/Host/Environment/InfraAsCode.Deployment.cs)
 
 [![NuGet Version](https://img.shields.io/nuget/v/CodeOps.DeploymentAsCode)](https://www.nuget.org/packages/CodeOps.DeploymentAsCode/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/CodeOps.DeploymentAsCode)](https://www.nuget.org/packages/CodeOps.DeploymentAsCode/)
 
 **CodeOps.DeploymentAsCode** Is a library helping with easier application code deployment into <br>for example Azure Containers Registry as a Docker and then into Azure App Serivice.
 
